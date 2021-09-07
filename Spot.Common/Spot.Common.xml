@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spot.Common</name>
+    </assembly>
+    <members>
+        <member name="T:Spot.Common.Business">
+            <summary>Holds a SPOT Business</summary>
+        </member>
+        <member name="P:Spot.Common.Business.ID">
+            <summary>ID of this business</summary>
+        </member>
+        <member name="P:Spot.Common.Business.Name">
+            <summary>Name of this business</summary>
+        </member>
+        <member name="P:Spot.Common.Business.Owner">
+            <summary>Owner of this business</summary>
+        </member>
+        <member name="P:Spot.Common.Business.Spots">
+            <summary>
+            Spots this business has.  
+            Ignored when seralizing as a JSON to avoid a circular loop
+            </summary>
+        </member>
+        <member name="P:Spot.Common.Business.OpenTime">
+            <summary>Time at which this business opens (Date ignored)</summary>
+        </member>
+        <member name="P:Spot.Common.Business.CloseTime">
+            <summary>Time at which this business closes (Date ignored)</summary>
+        </member>
+        <member name="T:Spot.Common.ISpotBase">
+            <summary>Holds the *absolute base* properties needed for an item in Spot</summary>
+        </member>
+        <member name="P:Spot.Common.ISpotBase.ID">
+            <summary>ID Of this object</summary>
+        </member>
+        <member name="T:Spot.Common.ReservationStatus">
+            <summary>Status of a reservation</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.PENDING">
+            <summary>Reservation is pending and has not been used</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.MISSED">
+            <summary>Reservation was missed, and is no longer valid</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.IN_PROGRESS">
+            <summary>Reservation is currently being used and is in progress</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.COMPLETED">
+            <summary>Reservation is completed and was used</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.CANCELLED">
+            <summary>Reservation was cancelled (either by business or reservation owner) and is no longer valid</summary>
+        </member>
+        <member name="T:Spot.Common.Reservation">
+            <summary>Holds a SPOT Reservation</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.ID">
+            <summary>ID of this Reservation</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.Start">
+            <summary>Date and time this reservation starts</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.End">
+            <summary>Date and time this reservetion ends</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.Spot">
+            <summary>Spot this reservation reserves</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.User">
+            <summary>User this reservation belongs to</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.Status">
+            <summary>Status of this reservation</summary>
+        </member>
+        <member name="T:Spot.Common.Spot">
+            <summary>Holds a Spot Spot</summary>
+        </member>
+        <member name="P:Spot.Common.Spot.ID">
+            <summary>ID of this Spot</summary>
+        </member>
+        <member name="P:Spot.Common.Spot.Name">
+            <summary>Name of this Spot</summary>
+        </member>
+        <member name="P:Spot.Common.Spot.Description">
+            <summary>Description of this spot</summary>
+        </member>
+        <member name="P:Spot.Common.Spot.Business">
+            <summary>Business this Spot belongs to</summary>
+        </member>
+        <member name="P:Spot.Common.Spot.Image">
+            <summary>Image that represents this spot</summary>
+        </member>
+        <member name="T:Spot.Common.User">
+            <summary>Holds a SPOT User</summary>
+        </member>
+        <member name="P:Spot.Common.User.Username">
+            <summary>ID of this User</summary>
+        </member>
+        <member name="P:Spot.Common.User.Password">
+            <summary>Password of this user</summary>
+        </member>
+        <member name="P:Spot.Common.User.IsOwner">
+            <summary>Whether or not this user is an owner or not</summary>
+        </member>
+        <member name="P:Spot.Common.User.Reservations">
+            <summary>
+            Reservations this user has. 
+            Ignored when seralizing as a JSON to avoid a circular loop.
+            </summary>
+        </member>
+    </members>
+</doc>
