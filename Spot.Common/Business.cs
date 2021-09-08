@@ -31,6 +31,9 @@ namespace Spot.Common {
         /// <summary>Time at which this business closes (Date ignored)</summary>
         public DateTime CloseTime { get; set; }
 
+        /// <summary>Flag to determine if reservations made to this business require reservations or not</summary>
+        public bool ReservationsRequireApproval { get; set; }
+
         #endregion
 
     }
