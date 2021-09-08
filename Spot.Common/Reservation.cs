@@ -52,5 +52,13 @@ namespace Spot.Common {
 
         #endregion
 
+        #region Methods
+
+        /// <summary>Method to check if a reservation is valid or not</summary>
+        /// <returns>True if and only if the <see cref="Status"/> is NOT <see cref="ReservationStatus.DENIED"/> or <see cref="ReservationStatus.CANCELLED"/></returns>
+        public bool IsValid() { return Status != ReservationStatus.DENIED && Status != ReservationStatus.CANCELLED; }
+
+        #endregion
+
     }
 }
