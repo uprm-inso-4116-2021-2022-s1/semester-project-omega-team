@@ -5,8 +5,14 @@ namespace Spot.Common {
     /// <summary>Status of a reservation</summary>
     public enum ReservationStatus { 
     
-        /// <summary>Reservation is pending and has not been used</summary>
+        /// <summary>Reservation is pending approval from the business owner</summary>
         PENDING,
+
+        /// <summary>Reservation was denied by the business owner and is no longer valid.</summary>
+        DENIED,
+
+        /// <summary>Reservation is approved and has not been used</summary>
+        APPROVED,
 
         /// <summary>Reservation was missed, and is no longer valid</summary>
         MISSED, 
@@ -19,7 +25,6 @@ namespace Spot.Common {
 
         /// <summary>Reservation was cancelled (either by business or reservation owner) and is no longer valid</summary>
         CANCELLED
-
     }
 
     /// <summary>Holds a SPOT Reservation</summary>
