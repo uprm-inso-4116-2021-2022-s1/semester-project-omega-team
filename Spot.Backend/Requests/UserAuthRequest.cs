@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OmegaSpot.Backend.Requests {
+﻿namespace OmegaSpot.Backend.Requests {
 
     /// <summary>Request to authenticate and log in a user</summary>
     public class UserAuthRequest {

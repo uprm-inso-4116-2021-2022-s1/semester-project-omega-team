@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OmegaSpot.Backend.Requests {
+﻿namespace OmegaSpot.Backend.Requests {
 
     /// <summary>Minimum common information for a Spot request.</summary>
     public interface ISpotRequest {
 
         /// <summary>ID of the session executing this request</summary>
-        public Guid SessionID { get; set; }
+        public System.Guid SessionID { get; set; }
 
     }
 }
