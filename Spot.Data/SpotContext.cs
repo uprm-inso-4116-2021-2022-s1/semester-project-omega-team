@@ -28,7 +28,7 @@ namespace OmegaSpot.Data {
         public DbSet<Business> Business { get; set; }
 
         /// <summary>Table that contains all <see cref="Common.Spot"/></summary>
-        public DbSet<Common.Spot> Spot { get; set; }
+        public DbSet<Spot> Spot { get; set; }
    
         /// <summary>Table that contains all <see cref="Common.Reservation"/></summary>
         public DbSet<Reservation> Reservation { get; set; }

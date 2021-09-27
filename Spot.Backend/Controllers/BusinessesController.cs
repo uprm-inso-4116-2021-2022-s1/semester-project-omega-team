@@ -66,7 +66,7 @@ namespace OmegaSpot.Backend.Controllers {
             
             //This problem persists on a few other objects given how interconnected they are. 
 
-            List<Common.Spot> Spots = await _context.Spot
+            List<Spot> Spots = await _context.Spot
                 .Where(S => S.Business.ID == ID) //Here to make sure the list only contains those we need, we use a Where()
                 .ToListAsync();                  //Note how we can search subfields without including the field
 
