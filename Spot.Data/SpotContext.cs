@@ -34,7 +34,7 @@ namespace Spot.Data {
         public DbSet<Reservation> Reservation { get; set; }
 
         /// <summary>Table that contains all <see cref="Common.User"/></summary>
-        public DbSet<Business> User { get; set; }
+        public DbSet<User> User { get; set; }
 
         /// <summary>Table that contains all <see cref="Common.Notification"/></summary>
         public DbSet<Notification> Notification { get; set; }
