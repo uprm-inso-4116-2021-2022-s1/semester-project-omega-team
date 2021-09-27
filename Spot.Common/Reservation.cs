@@ -35,11 +35,14 @@ namespace Spot.Common {
         /// <summary>ID of this Reservation</summary>
         public Guid ID { get; set; }
 
+        /// <summary>Reason for this reservation (usually for requests that are <see cref="ReservationStatus.PENDING"/>)</summary>
+        public string Reason { get; set; }
+
         /// <summary>Date and time this reservation starts</summary>
-        public DateTime Start { get; set; }
+        public DateTime StartTime { get; set; }
 
         /// <summary>Date and time this reservetion ends</summary>
-        public DateTime End { get; set; }
+        public DateTime EndTime { get; set; }
 
         /// <summary>Spot this reservation reserves</summary>
         public Spot Spot { get; set; }
