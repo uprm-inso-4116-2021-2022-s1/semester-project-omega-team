@@ -240,7 +240,7 @@ namespace OmegaSpot.Backend.Controllers {
             //Find Reservations
             List<Reservation> DBU = await _context.Reservation
                 .Include(R => R.Spot).ThenInclude(S => S.Business)
-                .OrderBy(R => R.Status)
+                .OrderBy(R => R.Status).ThenByDescending(R => R.StartTime)
                 .ToListAsync();
 
             return Ok(DBU);
