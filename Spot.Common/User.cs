@@ -16,6 +16,9 @@ namespace Spot.Common {
         /// <summary>Password of this user</summary>
         public string Password { get; set; }
 
+        /// <summary>The name of this user</summary>
+        public string Name { get; set; }
+
         /// <summary>Whether or not this user is an owner or not</summary>
         public bool IsOwner { get; set; }
 
