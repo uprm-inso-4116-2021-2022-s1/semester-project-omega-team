@@ -177,16 +177,13 @@ namespace OmegaSpot.Backend.Controllers {
                 .Where(N => N.User.Username == S.UserID && !N.Read).ToListAsync();
             if (Ns == null) { return NotFound(); }
 
-            int UpdatedNotifs = 0;
-
             foreach (var N in Ns) {
                 N.Read = true;
                 _context.Update(N);
-                UpdatedNotifs++;
             }
 
             await _context.SaveChangesAsync();
-            return Ok(UpdatedNotifs);
+            return Ok(Ns.Count);
         }
 
         /// <summary>Delets all notifications that are read from a session's tied user.</summary>
