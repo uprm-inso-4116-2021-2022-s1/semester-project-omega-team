@@ -14,6 +14,7 @@ namespace OmegaSpot.Common {
         public string Username { get; set; }
 
         /// <summary>Password of this user</summary>
+        [JsonIgnore] //Make sure the Password never gets serialized!!
         public string Password { get; set; }
 
         /// <summary>The name of this user</summary>
