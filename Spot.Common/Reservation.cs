@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
 
     /// <summary>Status of a reservation</summary>
     public enum ReservationStatus { 

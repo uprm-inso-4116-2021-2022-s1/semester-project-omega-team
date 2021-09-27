@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
 
     /// <summary>Holds a SPOT Business</summary>
     public class Business: ISpotBase {

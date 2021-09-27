@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Spot.Data;
+using OmegaSpot.Data;
 
-namespace Spot.Data.Migrations
+namespace OmegaSpot.Data.Migrations
 {
     [DbContext(typeof(SpotContext))]
     partial class SpotContextModelSnapshot : ModelSnapshot

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Spot.Common;
+using OmegaSpot.Common;
 using System;
 
-namespace Spot.Data {
+namespace OmegaSpot.Data {
     public class SpotContext:DbContext {
 
         public const string ConString = "Data Source=localhost;Initial Catalog=Spot;Integrated Security=True";

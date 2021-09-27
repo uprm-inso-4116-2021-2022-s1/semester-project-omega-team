@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Spot.Common;
-using Spot.Data;
+using OmegaSpot.Common;
+using OmegaSpot.Data;
 
-namespace Spot.Backend.Controllers {
+namespace OmegaSpot.Backend.Controllers {
 
     [Route("User")] //This is the route the URL needs to go to
     [ApiController] //This indicates there's an API Controller 

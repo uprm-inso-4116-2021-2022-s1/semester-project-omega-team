@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Spot.Data;
+using OmegaSpot.Data;
 
-namespace Spot.Data.Migrations
+namespace OmegaSpot.Data.Migrations
 {
     [DbContext(typeof(SpotContext))]
     [Migration("20210908013023_ReservationStatusUpdate")]

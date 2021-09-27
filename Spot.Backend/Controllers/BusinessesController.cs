@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Spot.Common;
-using Spot.Data;
+using OmegaSpot.Common;
+using OmegaSpot.Data;
 
-namespace Spot.Backend.Controllers {
+namespace OmegaSpot.Backend.Controllers {
 
     [Route("Business")] //This indicates the URL Route to bind this controler to. Suppose our address is http://localhost : this controller will be mapped to http://localhost/Business
     [ApiController] //This indicates this is an API Controller

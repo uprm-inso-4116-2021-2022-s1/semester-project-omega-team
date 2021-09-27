@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Spot.Data;
+using OmegaSpot.Data;
 
-namespace Spot.Backend {
+namespace OmegaSpot.Backend {
     public class Startup {
         public Startup(IConfiguration configuration) {
             Configuration = configuration;

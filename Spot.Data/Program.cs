@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Spot.Data {
+namespace OmegaSpot.Data {
     /// <summary>test program to see NecoData in action</summary>
     public static class Program {
 

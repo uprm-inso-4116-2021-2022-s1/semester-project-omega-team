@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
 
     /// <summary>Holds a SPOT User</summary>
     public class User {

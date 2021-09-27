@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
     /// <summary>Holds a Spot notification, which informs a <see cref="Common.User"/> about <see cref="Reservation"/> changes</summary>
     public class Notification: ISpotBase {
 

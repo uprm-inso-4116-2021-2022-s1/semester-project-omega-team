@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Spot.Data.Migrations
+namespace OmegaSpot.Data.Migrations
 {
     public partial class NotifAndNewFields : Migration
     {

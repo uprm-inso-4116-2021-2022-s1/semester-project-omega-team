@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
 
     /// <summary>Holds the *absolute base* properties needed for an item in Spot</summary>
     internal interface ISpotBase {

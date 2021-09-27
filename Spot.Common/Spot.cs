@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Spot.Common {
+namespace OmegaSpot.Common {
 
     /// <summary>Holds a Spot Spot</summary>
     public class Spot: ISpotBase {
