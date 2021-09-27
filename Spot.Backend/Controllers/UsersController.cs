@@ -32,7 +32,7 @@ namespace OmegaSpot.Backend.Controllers {
             User DBU = await _context.User.FindAsync(U.Username);
             if (DBU == null) { return Ok(Guid.Empty); }
 
-            if (DBU.Equals(U)) {
+            if (DBU.Password == U.Password) {
                 //Log in
                 return Ok(SessionManager.Manager.LogIn(U.Username));
             }
