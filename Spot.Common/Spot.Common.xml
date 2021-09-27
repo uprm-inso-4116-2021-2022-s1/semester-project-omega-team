@@ -28,17 +28,53 @@
         <member name="P:Spot.Common.Business.CloseTime">
             <summary>Time at which this business closes (Date ignored)</summary>
         </member>
+        <member name="P:Spot.Common.Business.ReservationsRequireApproval">
+            <summary>Flag to determine if reservations made to this business require reservations or not</summary>
+        </member>
+        <member name="P:Spot.Common.Business.PhoneNumbers">
+            <summary>Phone Number(s) for this location</summary>
+        </member>
+        <member name="P:Spot.Common.Business.Email">
+            <summary>Email of this business</summary>
+        </member>
+        <member name="P:Spot.Common.Business.Website">
+            <summary>URL to the website of this business</summary>
+        </member>
         <member name="T:Spot.Common.ISpotBase">
             <summary>Holds the *absolute base* properties needed for an item in Spot</summary>
         </member>
         <member name="P:Spot.Common.ISpotBase.ID">
             <summary>ID Of this object</summary>
         </member>
+        <member name="T:Spot.Common.Notification">
+            <summary>Holds a Spot notification, which informs a <see cref="T:Spot.Common.User"/> about <see cref="T:Spot.Common.Reservation"/> changes</summary>
+        </member>
+        <member name="P:Spot.Common.Notification.ID">
+            <summary>ID of this notification</summary>
+        </member>
+        <member name="P:Spot.Common.Notification.SentTime">
+            <summary>Time and date at which it was sent out</summary>
+        </member>
+        <member name="P:Spot.Common.Notification.User">
+            <summary>User this notification was sent to</summary>
+        </member>
+        <member name="P:Spot.Common.Notification.Text">
+            <summary>Text of this notification</summary>
+        </member>
+        <member name="P:Spot.Common.Notification.Read">
+            <summary>Whether or not this notification has been read by the user</summary>
+        </member>
         <member name="T:Spot.Common.ReservationStatus">
             <summary>Status of a reservation</summary>
         </member>
         <member name="F:Spot.Common.ReservationStatus.PENDING">
-            <summary>Reservation is pending and has not been used</summary>
+            <summary>Reservation is pending approval from the business owner</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.DENIED">
+            <summary>Reservation was denied by the business owner and is no longer valid.</summary>
+        </member>
+        <member name="F:Spot.Common.ReservationStatus.APPROVED">
+            <summary>Reservation is approved and has not been used</summary>
         </member>
         <member name="F:Spot.Common.ReservationStatus.MISSED">
             <summary>Reservation was missed, and is no longer valid</summary>
@@ -58,10 +94,13 @@
         <member name="P:Spot.Common.Reservation.ID">
             <summary>ID of this Reservation</summary>
         </member>
-        <member name="P:Spot.Common.Reservation.Start">
+        <member name="P:Spot.Common.Reservation.Reason">
+            <summary>Reason for this reservation (usually for requests that are <see cref="F:Spot.Common.ReservationStatus.PENDING"/>)</summary>
+        </member>
+        <member name="P:Spot.Common.Reservation.StartTime">
             <summary>Date and time this reservation starts</summary>
         </member>
-        <member name="P:Spot.Common.Reservation.End">
+        <member name="P:Spot.Common.Reservation.EndTime">
             <summary>Date and time this reservetion ends</summary>
         </member>
         <member name="P:Spot.Common.Reservation.Spot">
@@ -72,6 +111,10 @@
         </member>
         <member name="P:Spot.Common.Reservation.Status">
             <summary>Status of this reservation</summary>
+        </member>
+        <member name="M:Spot.Common.Reservation.IsValid">
+            <summary>Method to check if a reservation is valid or not</summary>
+            <returns>True if and only if the <see cref="P:Spot.Common.Reservation.Status"/> is NOT <see cref="F:Spot.Common.ReservationStatus.DENIED"/> or <see cref="F:Spot.Common.ReservationStatus.CANCELLED"/></returns>
         </member>
         <member name="T:Spot.Common.Spot">
             <summary>Holds a Spot Spot</summary>
@@ -99,6 +142,9 @@
         </member>
         <member name="P:Spot.Common.User.Password">
             <summary>Password of this user</summary>
+        </member>
+        <member name="P:Spot.Common.User.Name">
+            <summary>The name of this user</summary>
         </member>
         <member name="P:Spot.Common.User.IsOwner">
             <summary>Whether or not this user is an owner or not</summary>
