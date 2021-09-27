@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spot.Data;
 
 namespace Spot.Data.Migrations
 {
     [DbContext(typeof(SpotContext))]
-    partial class SpotContextModelSnapshot : ModelSnapshot
+    [Migration("20210908172036_NotifAndNewFields")]
+    partial class NotifAndNewFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,9 +30,6 @@ namespace Spot.Data.Migrations
                     b.Property<DateTime>("CloseTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -40,45 +39,14 @@ namespace Spot.Data.Migrations
                     b.Property<string>("OwnerUsername")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PhoneNumbers")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("ReservationsRequireApproval")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("OwnerUsername");
 
                     b.ToTable("Business");
-                });
-
-            modelBuilder.Entity("Spot.Common.Notification", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Read")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("SentTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("Username");
-
-                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Spot.Common.Reservation", b =>
@@ -165,15 +133,6 @@ namespace Spot.Data.Migrations
                         .HasForeignKey("OwnerUsername");
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Spot.Common.Notification", b =>
-                {
-                    b.HasOne("Spot.Common.User", "User")
-                        .WithMany()
-                        .HasForeignKey("Username");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Spot.Common.Reservation", b =>

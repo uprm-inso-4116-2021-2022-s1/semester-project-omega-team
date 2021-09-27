@@ -36,5 +36,8 @@ namespace Spot.Data {
         /// <summary>Table that contains all <see cref="Common.User"/></summary>
         public DbSet<Business> User { get; set; }
 
+        /// <summary>Table that contains all <see cref="Common.Notification"/></summary>
+        public DbSet<Notification> Notification { get; set; }
+
     }
 }
