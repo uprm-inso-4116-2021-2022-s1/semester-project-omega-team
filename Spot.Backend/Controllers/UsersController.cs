@@ -106,5 +106,83 @@ namespace OmegaSpot.Backend.Controllers {
 
         #endregion
 
+        //This region handles management of notifications
+        #region Manage Notifications
+
+        [HttpPost("Notif")]
+        public async Task<IActionResult> GetNotifs(Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Load Notif
+            List<Notification> Ns = await _context.Notification
+                .Where(N => N.User.Username == S.UserID && !N.Read).ToListAsync();
+            if (Ns == null) { return NotFound(); }
+
+            return Ok(Ns);
+        }
+
+        //POST Notif/5
+        [HttpPost("Notif/{NotifID}")]
+        public async Task<IActionResult> ReadNotif(Guid NotifID, [FromBody] Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Load Notif
+            Notification N = await _context.Notification
+                .Include(N => N.User)
+                .FirstOrDefaultAsync(N => N.ID == NotifID);
+            if (N == null) { return NotFound(); }
+
+            if (N.User.Username != S.UserID) { return Unauthorized("Notification does not belong to this user"); }
+            N.Read = true;
+
+            _context.Update(N);
+            await _context.SaveChangesAsync();
+            return Ok(N);
+        }
+
+        //POST Notif/All
+        [HttpPost("Notif/all")]
+        public async Task<IActionResult> ReadNotifAll(Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Load Notif
+            List<Notification> Ns = await _context.Notification
+                .Where(N => N.User.Username == S.UserID && !N.Read).ToListAsync();
+            if (Ns == null) { return NotFound(); }
+
+            int UpdatedNotifs = 0;
+
+            foreach (var N in Ns) {
+                N.Read = true;
+                _context.Update(N);
+                UpdatedNotifs++;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(UpdatedNotifs);
+        }
+
+        //DELTE Notif
+        [HttpDelete("Notif")]
+        public async Task<IActionResult> ReadNotifDel(Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Load Notif
+            HashSet<Notification> Ns = _context.Notification
+                .Where(N => N.User.Username == S.UserID && N.Read).ToHashSet();
+            if (Ns == null) { return NotFound(); }
+
+            _context.RemoveRange(Ns);
+
+            await _context.SaveChangesAsync();
+            return Ok(Ns.Count);
+        }
+
+        #endregion
+
     }
 }
