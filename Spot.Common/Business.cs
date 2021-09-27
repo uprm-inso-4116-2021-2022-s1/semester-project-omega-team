@@ -34,6 +34,15 @@ namespace Spot.Common {
         /// <summary>Flag to determine if reservations made to this business require reservations or not</summary>
         public bool ReservationsRequireApproval { get; set; }
 
+        /// <summary>Phone Number(s) for this location</summary>
+        public string PhoneNumbers { get; set; }
+
+        /// <summary>Email of this business</summary>
+        public string Email { get; set; }
+
+        /// <summary>URL to the website of this business</summary>
+        public string Website { get; set; }
+
         #endregion
 
     }
