@@ -133,7 +133,9 @@ namespace OmegaSpot.Backend.Controllers {
 
             //Load Notif
             List<Notification> Ns = await _context.Notification
-                .Where(N => N.User.Username == S.UserID && !N.Read).ToListAsync();
+                .Where(N => N.User.Username == S.UserID && !N.Read)
+                .OrderByDescending(N => N.Read).ThenByDescending(N => N.SentTime)
+                .ToListAsync();
             if (Ns == null) { return NotFound(); }
 
             return Ok(Ns);
