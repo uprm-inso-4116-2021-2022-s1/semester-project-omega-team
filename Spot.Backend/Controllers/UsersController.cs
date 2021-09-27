@@ -77,6 +77,34 @@ namespace OmegaSpot.Backend.Controllers {
 
         #endregion
 
+        //This region handles other changes to a users account. Right now its only name. Perhaps in the future it'll include phone number? Email? Who knows
+        #region Manage User Account
+
+        //Hey maybe if someone could find a better anme for this I'd appreciate it
+
+        // POST: ChangeName
+        [HttpPost("ChangeName")]
+        public async Task<IActionResult> ChangeName(NameChangeRequest NCR) {
+
+            if (NCR.SessionID == Guid.Empty) { return BadRequest("Blank Session ID"); }
+
+            //Find Session
+            Session S = SessionManager.Manager.FindSession(NCR.SessionID);
+            if (S == null) { return BadRequest("Session ID not found"); }
+
+            //Find a user:
+            User DBU = await _context.User.FindAsync(S.UserID);
+
+            //OK go for change
+            DBU.Name = NCR.NewName;
+            _context.Update(DBU);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+
+        }
+
+        #endregion
 
     }
 }
