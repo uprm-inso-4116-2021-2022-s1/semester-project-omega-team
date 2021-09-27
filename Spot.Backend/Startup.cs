@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Spot.Data;
 
 namespace Spot.Backend {
     public class Startup {
@@ -24,6 +25,8 @@ namespace Spot.Backend {
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
+            services.AddDbContext<SpotContext>();
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Spot.Backend", Version = "v1" });
             });
