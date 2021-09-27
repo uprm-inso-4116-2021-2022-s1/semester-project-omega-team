@@ -23,7 +23,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         // POST: Auth
         [HttpPost("Auth")]
-        public async Task<IActionResult> Check(UserAuthRequest U) {
+        public async Task<IActionResult> LogIn(UserAuthRequest U) {
             if (string.IsNullOrEmpty(U.Username)) { return BadRequest("Blank User Auth object"); }
 
             //Find a user:
@@ -56,7 +56,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         // PUT: Auth
         [HttpPut("Auth")]
-        public async Task<IActionResult> Update(PasswordChangeRequest PCR) {
+        public async Task<IActionResult> ChangePassword(PasswordChangeRequest PCR) {
             if (PCR.SessionID == Guid.Empty) { return BadRequest("Blank Session ID"); }
 
             //Find Session
