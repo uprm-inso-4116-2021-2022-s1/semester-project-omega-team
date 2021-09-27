@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Spot.Backend.Requests {
+namespace OmegaSpot.Backend.Requests {
 
     /// <summary>Minimum common information for a Spot request.</summary>
     public interface ISpotRequest {
