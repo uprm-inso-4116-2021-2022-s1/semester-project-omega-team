@@ -184,5 +184,54 @@ namespace OmegaSpot.Backend.Controllers {
 
         #endregion
 
+        //This region handles the getting of user details
+        #region User Details
+
+        [HttpPost]
+        public async Task<IActionResult> UserDetails(Guid SessionID) {
+
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Find a user:
+            User DBU = await _context.User.FindAsync(S.UserID);
+
+            return Ok(DBU);
+        }
+
+        [HttpPost("Reservations")]
+        public async Task<IActionResult> UserReservations(Guid SessionID) {
+
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Find Reservations
+            List<Reservation> DBU = await _context.Reservation
+                .Include(R => R.Spot).ThenInclude(S => S.Business)
+                .OrderBy(R => R.Status)
+                .ToListAsync();
+
+            return Ok(DBU);
+        }
+
+        [HttpPost("Business")]
+        public async Task<IActionResult> UserBusiness(Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Find a user:
+            User DBU = await _context.User.FindAsync(S.UserID);
+
+            if (!DBU.IsOwner) { return BadRequest("User is not a business owner"); }
+
+            //Let's find their business
+            Business B = await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == DBU.Username);
+            if (B == null) { return NotFound("Although the user is a business owner, a business with them as the owner has not been found. Perhaps it has not been setup yet"); }
+
+            return Ok(B);
+        }
+
+        #endregion
+
     }
 }
