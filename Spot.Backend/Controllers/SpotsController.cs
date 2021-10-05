@@ -42,10 +42,23 @@ namespace OmegaSpot.Backend.Controllers {
                 .Include(S => S.Business).FirstOrDefaultAsync(m => m.ID == id);
 
             if (asset == null) { return NotFound(); }
-            //if (asset.Image == null) { asset.Image = ImageToPngByteArray(Properties.Resources.UMSATBlank); } //TODO Replace this with an actual temporary
-
             return Ok(asset);
         }
+
+        [HttpGet("Images/{id}.png")]
+        public async Task<IActionResult> GetSpotImage(Guid ID) {
+            //Get the country and include ***everything***
+
+            var asset = await _context.Spot
+                .Include(S => S.Business).FirstOrDefaultAsync(m => m.ID == ID);
+
+            if (asset == null) { return NotFound("Could not find spot"); }
+
+            if (asset.Image == null) { asset.Image = ImageToPngByteArray(Properties.Resources.DefaultSpot); }
+           
+            return File(asset.Image, "image/png");
+        }
+
 
         // POST: SPOT
         [HttpPost]
