@@ -117,7 +117,7 @@ namespace OmegaSpot.Backend.Controllers {
             if (Sp.Business.ID != B.ID) { return Unauthorized("Session owner isn't this Spot's owner"); }
 
             //Update the asset details
-            Sp.Image = Request.Image;
+            Sp.Image = ConvertImageByteArray(Request.Image,ImageFormat.Jpeg);
 
             _context.Update(Sp);
 
