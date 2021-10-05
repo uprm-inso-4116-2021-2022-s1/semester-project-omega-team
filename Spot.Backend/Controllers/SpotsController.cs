@@ -47,7 +47,7 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(asset);
         }
 
-        [HttpGet("Images/{id}.png")]
+        [HttpGet("Images/{id}.jpg")]
         public async Task<IActionResult> GetSpotImage(Guid ID) {
             //Get the country and include ***everything***
 
