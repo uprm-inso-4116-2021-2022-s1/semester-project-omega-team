@@ -51,8 +51,7 @@ namespace OmegaSpot.Backend.Controllers {
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
             //Get the country and include ***everything***
 
-            var asset = await _context.Spot
-                .Include(S => S.Business).FirstOrDefaultAsync(m => m.ID == ID);
+            var asset = await _context.Spot.FirstOrDefaultAsync(m => m.ID == ID);
 
             if (asset == null) { return NotFound("Could not find spot"); }
             if (asset.Image == null) { asset.Image = ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg); }
