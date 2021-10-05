@@ -19,7 +19,12 @@ namespace OmegaSpot.Backend.Controllers {
     public class SpotsController : Controller {
         private readonly SpotContext _context;
 
-        public SpotsController(SpotContext context) { _context = context; }
+        private readonly byte[] DEFAULT_IMAGE;
+
+        public SpotsController(SpotContext context) { 
+            _context = context; 
+            DEFAULT_IMAGE= ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg);
+        }
 
         // GET: SPOT
         [HttpGet]
@@ -51,12 +56,11 @@ namespace OmegaSpot.Backend.Controllers {
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
             //Get the country and include ***everything***
 
-            var asset = await _context.Spot.FirstOrDefaultAsync(m => m.ID == ID);
+            byte[] B = (await _context.Spot.FirstOrDefaultAsync(m => m.ID == ID))?.Image;
 
-            if (asset == null) { return NotFound("Could not find spot"); }
-            if (asset.Image == null) { asset.Image = ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg); }
+            if (B == null) { B = DEFAULT_IMAGE; }
            
-            return File(asset.Image, "image/jpeg");
+            return File(B, "image/jpeg");
         }
 
 
