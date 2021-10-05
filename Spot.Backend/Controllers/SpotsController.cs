@@ -61,7 +61,14 @@ namespace OmegaSpot.Backend.Controllers {
             //Get the byte array
             byte[] B = S.Image;
             if (B == null) { B = DEFAULT_IMAGE; }
-           
+
+            //If Either Width or height are not null then its time to resize
+            if (Width != null || Height != null) {
+                Image I = ByteArrayToImage(B);
+                I = ResizeImage(I, Width, Height);
+                B = ImageToByteArray(I, ImageFormat.Jpeg);
+            }
+
             //return the image
             return File(B, "image/jpeg");
         }
@@ -155,6 +162,38 @@ namespace OmegaSpot.Backend.Controllers {
             if (!U.IsOwner) { return null; }
 
             return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
+        }
+
+        public static Image ResizeImage(Image I, int? Width, int? Height) {
+            if (Width == null && Height == null) { return I; } //No resize needed
+
+            //Look at me declaring two variables on the same line it almost feels out of character
+            int W, H;
+
+            if (Width == null) {
+                //Calcualte proportional Width
+                H = Height.Value;
+
+                //Width(H)==Height(W)
+                //W=Width(H)/Height
+                W = I.Width * H / I.Height; 
+
+            } else if (Height == null) {
+                //Calculate proportional Height
+                W = Width.Value;
+
+                //Width(H)==Height(W)
+                //H=Height(W)/Wdith
+                H = I.Height * W / I.Width;
+
+            } else {
+                //We have a specified width and height
+                W = Width.Value;
+                H = Height.Value;
+            }
+
+            return new Bitmap(I,W,H);
+
         }
 
         /// <summary>Converts an Image to a byte array of specified image format data</summary>
