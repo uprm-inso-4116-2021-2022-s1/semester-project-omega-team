@@ -162,5 +162,20 @@ namespace OmegaSpot.Backend.Controllers {
             return ms.ToArray();
         }
 
+        /// <summary>Converts an Image to a byte array of specified image format data</summary>
+        /// <param name="B"></param>
+        /// <param name="IF"></param>
+        /// <returns></returns>
+        private static byte[] ConvertImageByteArray(byte[] B, ImageFormat IF) {
+
+            using MemoryStream ms = new(B);
+
+            //Load the image
+            Image I = Bitmap.FromStream(ms);
+
+            //Convert it back
+            return ImageToByteArray(I, IF);
+
+        }
     }
 }
