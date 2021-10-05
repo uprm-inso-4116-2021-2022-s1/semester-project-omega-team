@@ -54,12 +54,15 @@ namespace OmegaSpot.Backend.Controllers {
 
         [HttpGet("Images/{id}.jpg")]
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
-            //Get the country and include ***everything***
+            //Get the spot
+            Spot S = await _context.Spot.FirstOrDefaultAsync(m => m.ID == ID);
+            if (S == null) { return NotFound("Spot could not be found"); }
 
-            byte[] B = (await _context.Spot.FirstOrDefaultAsync(m => m.ID == ID))?.Image;
-
+            //Get the byte array
+            byte[] B = S.Image;
             if (B == null) { B = DEFAULT_IMAGE; }
            
+            //return the image
             return File(B, "image/jpeg");
         }
 
