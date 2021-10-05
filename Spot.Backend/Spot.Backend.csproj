@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>c94cc451-41b3-48de-a9ba-aa8499dbc6f9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>OmegaSpot.Backend</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
