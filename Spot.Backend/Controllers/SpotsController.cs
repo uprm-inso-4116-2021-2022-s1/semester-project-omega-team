@@ -9,6 +9,8 @@ using OmegaSpot.Common;
 using OmegaSpot.Backend.Requests;
 using OmegaSpot.Data;
 using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace OmegaSpot.Backend.Controllers {
     
@@ -54,9 +56,9 @@ namespace OmegaSpot.Backend.Controllers {
 
             if (asset == null) { return NotFound("Could not find spot"); }
 
-            if (asset.Image == null) { asset.Image = ImageToPngByteArray(Properties.Resources.DefaultSpot); }
+            if (asset.Image == null) { asset.Image = ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg); }
            
-            return File(asset.Image, "image/png");
+            return File(asset.Image, "image/jpeg");
         }
 
 
@@ -150,12 +152,15 @@ namespace OmegaSpot.Backend.Controllers {
             return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
         }
 
-        private static byte[] ImageToPngByteArray(System.Drawing.Image I) {
+        /// <summary>Converts an Image to a byte array of specified image format data</summary>
+        /// <param name="I"></param>
+        /// <param name="IF"></param>
+        /// <returns></returns>
+        private static byte[] ImageToByteArray(Image I, ImageFormat IF) {
             using MemoryStream ms = new();
-            I.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            I.Save(ms, IF);
             return ms.ToArray();
         }
-
 
     }
 }
