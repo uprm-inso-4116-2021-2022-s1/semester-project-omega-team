@@ -13,7 +13,7 @@ namespace OmegaSpot.Backend.Requests {
         public Guid SessionID { get; set; }
 
         /// <summary>ID of the plot to update the image of</summary>
-        public Guid PlotID { get; set; }
+        public Guid SpotID { get; set; }
 
         /// <summary>Spot's new image</summary>
         public byte[] Image { get; set; }
