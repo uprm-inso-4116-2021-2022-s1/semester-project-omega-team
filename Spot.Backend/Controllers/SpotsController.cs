@@ -48,14 +48,13 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         [HttpGet("Images/{id}.jpg")]
-        public async Task<IActionResult> GetSpotImage(Guid ID) {
+        public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
             //Get the country and include ***everything***
 
             var asset = await _context.Spot
                 .Include(S => S.Business).FirstOrDefaultAsync(m => m.ID == ID);
 
             if (asset == null) { return NotFound("Could not find spot"); }
-
             if (asset.Image == null) { asset.Image = ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg); }
            
             return File(asset.Image, "image/jpeg");
@@ -162,19 +161,24 @@ namespace OmegaSpot.Backend.Controllers {
             return ms.ToArray();
         }
 
+        /// <summary>Converts a byte array to an image object</summary>
+        /// <param name="B"></param>
+        /// <returns></returns>
+        private static Image ByteArrayToImage(byte[] B) {
+            using MemoryStream ms = new(B);
+
+            //Load the image
+            return Bitmap.FromStream(ms);
+        }
+
         /// <summary>Converts an Image to a byte array of specified image format data</summary>
         /// <param name="B"></param>
         /// <param name="IF"></param>
         /// <returns></returns>
         private static byte[] ConvertImageByteArray(byte[] B, ImageFormat IF) {
 
-            using MemoryStream ms = new(B);
-
-            //Load the image
-            Image I = Bitmap.FromStream(ms);
-
             //Convert it back
-            return ImageToByteArray(I, IF);
+            return ImageToByteArray(ByteArrayToImage(B), IF);
 
         }
     }
