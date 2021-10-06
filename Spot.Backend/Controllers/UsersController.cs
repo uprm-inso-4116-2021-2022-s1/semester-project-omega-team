@@ -47,7 +47,8 @@ namespace OmegaSpot.Backend.Controllers {
         //POST: Auth/Out
         [HttpPost("Auth/Out")]
         public async Task<IActionResult> LogOut(Guid SessionID) {
-            return Ok(SessionManager.Manager.LogOut(SessionID));
+            bool Result = await Task.Run(()=> SessionManager.Manager.LogOut(SessionID));
+            return Ok(Result);
         }
 
         /// <summary>Attempts to log out of all sessions that have the same user tied to it as the given session does</summary>
@@ -59,7 +60,9 @@ namespace OmegaSpot.Backend.Controllers {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
-            return Ok(SessionManager.Manager.LogOutAll(S.UserID));
+            int LogOutCount = await Task.Run(()=> SessionManager.Manager.LogOutAll(S.UserID));
+
+            return Ok(LogOutCount);
         }
 
         /// <summary>Attempts to change the password of a user with the session ID in the given password change request</summary>
