@@ -2,14 +2,21 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using OmegaSpot.Common;
 using System;
+using System.IO;
 
 namespace OmegaSpot.Data {
     public class SpotContext:DbContext {
 
-        public const string ConString = "Data Source=localhost;Initial Catalog=Spot;Integrated Security=True";
+        public readonly string ConString;
 
         /// <summary>Creates an EverythingContext</summary>
-        public SpotContext() : base() { }
+        public SpotContext() : base() {
+            if (!File.Exists("SpotConString.txt")) {
+                File.WriteAllText("SpotConString.txt", "Data Source=localhost;Initial Catalog=Spot;Integrated Security=True");
+            }
+
+            ConString = File.ReadAllText("SpotConString.txt");
+        }
 
         /// <summary>Overrides onConfiguring to use <see cref="ConString"/></summary>
         /// <param name="optionsBuilder"></param>
