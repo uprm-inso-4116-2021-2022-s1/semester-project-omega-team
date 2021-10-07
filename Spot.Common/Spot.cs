@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace OmegaSpot.Common {
 
@@ -20,6 +21,7 @@ namespace OmegaSpot.Common {
         public Business Business { get; set; }
 
         /// <summary>Image that represents this spot</summary>
+        [JsonIgnore]
         public byte[] Image { get; set; }
 
         #endregion

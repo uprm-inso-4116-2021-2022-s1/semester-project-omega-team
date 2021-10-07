@@ -5,6 +5,7 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject>OmegaSpot.Data.Program</StartupObject>
+    <RootNamespace>OmegaSpot.Data</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
