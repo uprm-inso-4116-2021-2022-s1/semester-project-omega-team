@@ -56,7 +56,7 @@ export default function LogIn() {
               }}
             >
               <Typography component="h1" variant="h3" color="#7761FF" fontFamily="Lucida Sans">
-                  spot
+                  Spot
               </Typography>
               <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                 <TextField
