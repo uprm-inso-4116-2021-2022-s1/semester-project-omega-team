@@ -74,7 +74,7 @@ export default function MainPage(props) {
     };
 
     const handleLogOut = () => {
-        history.push("/")
+        history.push("/login")
     };
 
     // business functions
