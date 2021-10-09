@@ -4,4 +4,4 @@ export default function SignUp() {
             <p>testing, SignUp works!</p>
         </div>
     )
-}
+} 
