@@ -31,7 +31,7 @@ export default function Spots() {
                             />
                             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <CardContent>
-                                    <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
+                                    <Typography gutterBottom variant="h5" component="div">
                                         Recent Spot {card}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">

@@ -270,13 +270,13 @@ export default function MainPage(props) {
                         keepMounted: true, // Better open performance on mobile.
                     }}
                     sx={{
-                        display: { xs: 'block', sm: 'none' },
+                        display: { xs: 'block', /*sm: 'none'*/ },
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
                 >
                     {accountType === "business" ? drawerBusiness : drawerClient}
                 </Drawer>
-                <Drawer
+                {/* <Drawer
                     variant="permanent"
                     sx={{
                         display: { xs: 'none', sm: 'block' },
@@ -285,7 +285,7 @@ export default function MainPage(props) {
                     open
                 >
                     {accountType === "business" ? drawerBusiness : drawerClient}
-                </Drawer>
+                </Drawer> */}
             </Box>
         </div>
     );
@@ -299,7 +299,7 @@ export default function MainPage(props) {
                         aria-label="open drawer"
                         edge="start"
                         onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
+                        sx={{ mr: 2, /*display: { sm: 'none' }*/ }}
                     >
                         <MenuIcon />
                     </IconButton>
@@ -394,7 +394,7 @@ export default function MainPage(props) {
 
     return (
         <div>
-            <Box sx={{ display: 'flex', backgroundColor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900] }}>
+            <Box sx={{ display: 'box', backgroundColor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900] }}>
                 <CssBaseline />
                 {header}
                 {renderMobileMenu}
