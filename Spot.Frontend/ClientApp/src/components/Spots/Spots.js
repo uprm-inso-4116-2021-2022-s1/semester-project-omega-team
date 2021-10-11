@@ -6,18 +6,22 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import { Button, CardActionArea, CardActions } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
 
 export default function Spots() {
 
-    const theme = useTheme();
     const recentCards = [1, 2, 3];
     const featuredCards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     return (
         <div>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Recent
+                </Typography>
+            </Divider>
             {/* desktop card */}
-            <Typography variant="h2" sx={{ p: 1 }}>Recent</Typography>
+            {/* <Typography variant="h2" sx={{ p: 1 }}>Recent</Typography> */}
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                 {recentCards.map((card) => (
                     <Grid item key={card}>
@@ -35,9 +39,7 @@ export default function Spots() {
                                         Recent Spot {card}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                                        enim praesent elementum facilisis leo vel.
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla efficitur libero ut urna sagittis, a convallis massa facilisis. Vestibulum sit amet commodo neque, a tristique lectus. Vivamus et elit mi. Fusce dictum molestie elit sit amet accumsan. Nunc ultricies est tellus, quis laoreet turpis maximus vel. Mauris sodales malesuada erat, vel finibus risus suscipit sit amet. Morbi ornare turpis in nisi imperdiet, ac mattis massa varius. Nulla posuere porta diam, laoreet feugiat lorem condimentum id.
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
@@ -81,7 +83,12 @@ export default function Spots() {
                 ))}
             </Grid>
             {/* desktop card */}
-            <Typography variant="h2" sx={{ p: 1 }}>Featured</Typography>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Featured
+                </Typography>
+            </Divider>
+            {/* <Typography variant="h2" sx={{ p: 1 }}>Featured</Typography> */}
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
                 {featuredCards.map((card) => (
                     <Grid item key={card}>
@@ -99,9 +106,7 @@ export default function Spots() {
                                         Featured Spot {card}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                                        enim praesent elementum facilisis leo vel.
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla efficitur libero ut urna sagittis, a convallis massa facilisis. Vestibulum sit amet commodo neque, a tristique lectus. Vivamus et elit mi. Fusce dictum molestie elit sit amet accumsan. Nunc ultricies est tellus, quis laoreet turpis maximus vel. Mauris sodales malesuada erat, vel finibus risus suscipit sit amet. Morbi ornare turpis in nisi imperdiet, ac mattis massa varius. Nulla posuere porta diam, laoreet feugiat lorem condimentum id.
                                     </Typography>
                                 </CardContent>
                                 <CardActions>

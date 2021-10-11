@@ -35,7 +35,7 @@ export default function MainPage(props) {
     let history = useHistory();
 
     const { window } = props;
-    const [accountType, setAccountType] = useState("business");
+    const [accountType, setAccountType] = useState("client");
     const container = window !== undefined ? () => window().document.body : undefined;
 
     const [showManageSpots, setShowManageSpots] = useState(true);
