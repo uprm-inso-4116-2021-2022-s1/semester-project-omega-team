@@ -35,7 +35,7 @@ export default function MainPage(props) {
     let history = useHistory();
 
     const { window } = props;
-    const [accountType, setAccountType] = useState("client");
+    const [accountType, setAccountType] = useState("business");
     const container = window !== undefined ? () => window().document.body : undefined;
 
     const [showManageSpots, setShowManageSpots] = useState(true);
@@ -258,7 +258,7 @@ export default function MainPage(props) {
             <Box
                 component="nav"
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-                aria-label="mailbox folders"
+                aria-label="component tabs"
             >
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer

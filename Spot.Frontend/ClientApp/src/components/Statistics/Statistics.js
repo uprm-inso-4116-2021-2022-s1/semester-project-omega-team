@@ -24,6 +24,11 @@ import Visitors from './Visitors';
 export default function Statistics() {
     return (
         <div>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Statistics
+                </Typography>
+            </Divider>
             <Grid container spacing={3}>
                 {/* Chart */}
                 <Grid item xs={12} md={8} lg={9}>

@@ -4,6 +4,7 @@ import LandingPage from './components/LandingPage/LandingPage';
 import LogIn from './components/UserAuth/LogIn/LogIn';
 import SignUp from './components/UserAuth/SignUp/SignUp';
 import MainPage from './components/MainPage/MainPage';
+import Test from './components/Test/Test';
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,6 +28,9 @@ function App() {
           </Route>
           <Route path="/mainpage">
             <MainPage />
+          </Route>
+          <Route path="/test">
+            <Test />
           </Route>
         </Switch>
       </Router>

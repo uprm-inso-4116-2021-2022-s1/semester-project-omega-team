@@ -99,7 +99,7 @@ export default function LogIn() {
                 >
                   Log In
                 </Button>
-                <Grid container>
+                <Grid container justifyContent="space-around">
                   <Grid item xs>
                     <Link href="#" variant="body2">
                       Forgot password?

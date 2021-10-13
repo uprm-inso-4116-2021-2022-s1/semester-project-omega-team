@@ -17,7 +17,7 @@ export default function Spots() {
         <div>
             <Divider sx={{ p: 5 }}>
                 <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Recent
+                    Recent Spots
                 </Typography>
             </Divider>
             {/* desktop card */}
@@ -85,7 +85,7 @@ export default function Spots() {
             {/* desktop card */}
             <Divider sx={{ p: 5 }}>
                 <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Featured
+                    Featured Spots
                 </Typography>
             </Divider>
             {/* <Typography variant="h2" sx={{ p: 1 }}>Featured</Typography> */}

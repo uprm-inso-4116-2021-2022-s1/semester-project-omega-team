@@ -1,5 +1,6 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -15,6 +16,11 @@ export default function ManageReservations() {
 
     return (
         <div>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Reservations
+                </Typography>
+            </Divider>
             {/* mobile card */}
             <Grid container spacing={4} >
                 {cards.map((card) => (
