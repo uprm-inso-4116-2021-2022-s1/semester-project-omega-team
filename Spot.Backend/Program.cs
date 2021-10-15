@@ -18,5 +18,10 @@ namespace OmegaSpot.Backend {
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public static bool OnHeroku {
+            get {return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("HEROKU"));}
+        }
+
     }
 }
