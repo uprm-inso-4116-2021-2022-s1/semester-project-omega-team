@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <ApplicationIcon />
-    <OutputType>Exe</OutputType>
-    <StartupObject>OmegaSpot.Data.Program</StartupObject>
+    <OutputType>Library</OutputType>
+    <StartupObject></StartupObject>
     <RootNamespace>OmegaSpot.Data</RootNamespace>
   </PropertyGroup>
 
