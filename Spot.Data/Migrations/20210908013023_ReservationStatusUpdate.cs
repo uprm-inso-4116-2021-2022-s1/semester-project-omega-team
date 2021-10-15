@@ -9,7 +9,7 @@ namespace OmegaSpot.Data.Migrations
             migrationBuilder.AddColumn<bool>(
                 name: "ReservationsRequireApproval",
                 table: "Business",
-                type: "bit",
+                type: "bool",
                 nullable: false,
                 defaultValue: false);
         }

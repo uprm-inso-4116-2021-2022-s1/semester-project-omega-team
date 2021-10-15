@@ -11,11 +11,11 @@ namespace OmegaSpot.Data.Migrations
                 name: "Notification",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SentTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Read = table.Column<bool>(type: "bit", nullable: false)
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    SentTime = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    Username = table.Column<string>(type: "varchar(450)", nullable: true),
+                    Text = table.Column<string>(type: "varchar", nullable: true),
+                    Read = table.Column<bool>(type: "bool", nullable: false)
                 },
                 constraints: table =>
                 {
