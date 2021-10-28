@@ -28,15 +28,31 @@ namespace OmegaSpot.Backend.Controllers {
 
         // GET: SPOT
         [HttpGet]
-        public async Task<IActionResult> Index(int? start, int? end) {
+        public async Task<IActionResult> Index(int? start, int? end, string Search) {
             int realstart = start != null ? (int)start : 0;
             int realend = end != null ? (int)end : 20;
             int count = Math.Max(0, realend - realstart);
-            var Assets = await _context.Spot
+            List<Spot> Assets;
+            if (string.IsNullOrWhiteSpace(Search)) {
+                //We have no query
+                Assets = await _context.Spot
                 .Include(S => S.Business)
                 .Skip(realstart).Take(count)
                 .ToListAsync();
-                
+            } else {
+                //We have a query
+                Search = Search.ToLower(); //Lowercase this now so that we don't have to later
+
+                Assets = await _context.Spot
+                .Include(S => S.Business)
+                .Where(S => 
+                    S.Name.ToLower().Contains(Search) || 
+                    S.Description.ToLower().Contains(Search) || 
+                    S.Business.Name.ToLower().Contains(Search)) //We use lowercase to make this search not case sensitive
+                .Skip(realstart).Take(count)
+                .ToListAsync();
+            }
+
             return Ok(Assets);
         }
 
