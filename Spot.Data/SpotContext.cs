@@ -16,12 +16,22 @@ namespace OmegaSpot.Data {
         /// <summary>Indicates whether or not to force no postgres</summary>
         private readonly bool ForceSQLServer = false;
 
-
         /// <summary>Override for Postgres server URL. <b></b></summary>
         private readonly string PostgresURL;
 
         /// <summary></summary>
         private readonly string SQLServerURL;
+
+        /// <summary>Underlying one for the prop <see cref="SqlConnection"/></summary>
+        private SqlConnection SCON;
+
+        /// <summary>Underlying SQL connection for raw SQL queries</summary>
+        private SqlConnection SqlConnection {
+            get {
+                if (SCON == null) { SCON = Database.GetDbConnection() as SqlConnection; SCON.Open(); }
+                return SCON;
+            }
+        }
 
         /// <summary>Creates an EverythingContext</summary>
         public SpotContext() : base() {
@@ -151,21 +161,9 @@ namespace OmegaSpot.Data {
             C.CommandText = SqlStringTopSpotsCutoff();
             C.Parameters.Add("@Cutoff", System.Data.SqlDbType.DateTime2);
             C.Parameters["@Cutoff"].Value = RealCutOff;
-            C.Connection = Database.GetDbConnection() as SqlConnection;
+            C.Connection = SqlConnection;
 
             List<Spot> Spots = await TopSpotCommandToListSpot(C,Count);
-            if (Spots.Count == Count) { return Spots; }
-
-            //If we're here, it means we're out of spots and we still need more
-            await foreach (Spot S in Spot.AsAsyncEnumerable()) {
-                if (!Spots.Contains(S)) { 
-                    Spots.Add(S);
-                    if (Spots.Count == Count) { return Spots; }
-                }
-            }
-
-            //If we're here then we're out of spots entirely to add to the list so uh....
-            //b y e
 
             return Spots;
         }
@@ -181,18 +179,24 @@ namespace OmegaSpot.Data {
             C.CommandText = SqlStringTopSpotsUser();
             C.Parameters.Add("@Username", System.Data.SqlDbType.VarChar);
             C.Parameters["@Username"].Value = Username;
-            C.Connection = Database.GetDbConnection() as SqlConnection;
+            C.Connection = SqlConnection;
 
             List<Spot> Spots = await TopSpotCommandToListSpot(C, Count);
             if (Spots.Count == Count || !Filler) { return Spots; }
 
             //If we're here, it means we're out of spots and we still need more
-            await foreach (Spot S in Spot.AsAsyncEnumerable()) {
-                if (!Spots.Contains(S)) {
-                    Spots.Add(S);
-                    if (Spots.Count == Count) { return Spots; }
-                }
-            }
+
+            int NewCount = Count - Spots.Count;
+            Spots.AddRange(await MostReservedSpots(Count));
+
+            //Should we check for repeats?
+
+//            foreach (Spot S in await MostReservedSpots(NewCount)) {
+//                if (!Spots.Contains(S)) {
+//                    Spots.Add(S);
+//                    if (Spots.Count == Count) { return Spots; }
+//                }
+//            }
 
             //If we're here then we're out of spots entirely to add to the list so uh....
             //b y e
