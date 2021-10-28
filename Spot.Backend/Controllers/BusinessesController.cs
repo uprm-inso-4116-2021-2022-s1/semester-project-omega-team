@@ -74,5 +74,39 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Spots);
         }
 
+        /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
+        /// <param name="SessionID"></param>
+        /// <returns></returns>
+        [HttpPost("Reservations")]
+        public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID) {
+
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            Business B = await GetSessionBusiness(S);
+            if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
+
+            //OK, now that we've got this
+
+            var Res = await _context.Reservation
+                .Include(R => R.Spot)
+                .Include(R => R.User)
+                .Where(R => R.Spot.Business.ID == B.ID)
+                .OrderBy(R => R.Status).ThenByDescending(r => r.StartTime)
+                .ToListAsync();
+
+            return Ok(Res);
+
+        }
+
+        private async Task<Business> GetSessionBusiness(Session S) {
+            User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
+            //actually we can assume a user just exists since they logged on
+            if (!U.IsOwner) { return null; }
+
+            return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
+        }
+
+
     }
 }
