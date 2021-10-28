@@ -135,21 +135,33 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns></returns>
         [HttpPost("ReservationsCount")]
-        public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID) {
+        public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
             Business B = await GetSessionBusiness(S);
             if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
 
-            Dictionary<ReservationStatus, int> ReservationCountDictionary = new();
+            DateTime Start = StartRange ?? DateTime.MinValue;
+            DateTime End = EndRange ?? DateTime.Now;
 
-            foreach (ReservationStatus RS in Enum.GetValues(typeof(ReservationStatus))) {
-                var Res = await _context.Reservation.CountAsync(R => R.Status == RS && R.Spot.Business.ID == B.ID);
-                ReservationCountDictionary.Add(RS, Res);
-            }
+            Type ElEnum = typeof(ReservationStatus);
 
-            return Ok(ReservationCountDictionary);
+            var Count = await _context.Reservation
+                .Where(R => R.Spot.Business.ID == B.ID &&
+                    R.StartTime > Start &&
+                    R.StartTime < End)
+                .GroupBy(R => R.Status)
+                .OrderBy(R => R.Key)
+                .Select(R => new { Status = Enum.GetName(ElEnum, R.Key), Count = R.Count() })
+                .ToListAsync();
+            return Ok(Count);
+        }
+
+        [HttpPost("SpotStatistics")]
+        public async Task<IActionResult> GetSpotBySpotStatistics([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
+            return Ok();
+
         }
 
         private async Task<Business> GetSessionBusiness(Session S) {
