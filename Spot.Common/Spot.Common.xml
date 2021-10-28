@@ -116,6 +116,9 @@
             <summary>Method to check if a reservation is valid or not</summary>
             <returns>True if and only if the <see cref="P:OmegaSpot.Common.Reservation.Status"/> is NOT <see cref="F:OmegaSpot.Common.ReservationStatus.DENIED"/> or <see cref="F:OmegaSpot.Common.ReservationStatus.CANCELLED"/></returns>
         </member>
+        <member name="M:OmegaSpot.Common.Reservation.AdvanceReservation">
+            <summary>Advances the state of the reservation if needed</summary>
+        </member>
         <member name="T:OmegaSpot.Common.Spot">
             <summary>Holds a Spot Spot</summary>
         </member>
