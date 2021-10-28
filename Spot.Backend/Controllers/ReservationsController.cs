@@ -20,6 +20,12 @@ namespace OmegaSpot.Backend.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
+
+            //Let's do a little validation before any of this:
+            if (Request.StartTime > Request.EndTime) { return BadRequest("Start time cannot be after end time"); }
+            if (Request.StartTime < DateTime.Now.AddSeconds(30)) { return BadRequest("Reservation cannot be in the past!"); }
+            if (Request.EndTime - Request.StartTime < new TimeSpan(0,15,0)) { return BadRequest("Reservations cannot be less than 15 minutes in length"); }
+
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
