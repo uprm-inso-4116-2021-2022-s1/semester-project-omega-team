@@ -49,8 +49,35 @@ namespace OmegaSpot.Backend.Controllers {
                 .Include(S => S.Business).FirstOrDefaultAsync(m => m.ID == id);
 
             if (asset == null) { return NotFound(); }
-            return Ok(asset);
+            return Ok(asset);   
         }
+
+        //GET: SPOT/Featured
+        [HttpGet("Featured")]
+        public async Task<IActionResult> GenericFeatured(int count) {
+            //Get spots ordered by number of reservations
+            return Ok(await _context.MostReservedSpots(count,DateTime.Now.AddDays(-7)));
+        }
+
+        //Post: SPOT/Featured
+        [HttpPost("Featured")]
+        public async Task<IActionResult> UserFeatured([FromBody] Guid SessionID, [FromQuery] int Count) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Get featured for this user (their most reserved spots)
+            List<Spot> Spots = await _context.MostReservedSpotsUser(Count, S.UserID, false);
+            
+            //If we don't have enough for the count, suplement it with generic featured.
+            if (Spots.Count < Count) {
+                int newCount = Count - Spots.Count;
+                Spots.AddRange(await _context.MostReservedSpots(newCount, DateTime.Now.AddDays(-7)));
+            }
+
+            return Ok(Spots);
+        }
+
+
 
         [HttpGet("Images/{id}.jpg")]
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
