@@ -80,6 +80,9 @@ namespace OmegaSpot.Backend.Controllers {
                     //Ensure the reservation is currently APPROVED
                     if (R.Status != ReservationStatus.APPROVED) { return BadRequest("Reservation is not currently approved"); }
 
+                    //Ensure it is a valid time to check in
+                    if (DateTime.Now > R.StartTime.AddMinutes(-5)) { return BadRequest("It is too early to check in"); }
+
                     break;
                 case ReservationStatus.COMPLETED:
                     //Ensure the user is the owner of the reservation
