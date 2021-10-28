@@ -93,7 +93,7 @@ namespace OmegaSpot.Backend.Controllers {
                     .Include(R => R.Spot)
                     .Include(R => R.User)
                     .Where(R => R.Spot.Business.ID == B.ID)
-                    .OrderBy(R => R.Status).ThenByDescending(r => r.StartTime)
+                    .OrderByDescending(r => r.StartTime)
                     .ToListAsync();
     
                 foreach (Reservation R in Res) { R.AdvanceReservation(); }
@@ -106,7 +106,7 @@ namespace OmegaSpot.Backend.Controllers {
                 .Include(R => R.Spot)
                 .Include(R => R.User)
                 .Where(R => R.Spot.Business.ID == B.ID && R.Status==Status.Value)
-                .OrderBy(R => R.Status).ThenByDescending(r => r.StartTime)
+                .OrderByDescending(r => r.StartTime)
                 .ToListAsync();
 
             if (Status != ReservationStatus.COMPLETED &&
