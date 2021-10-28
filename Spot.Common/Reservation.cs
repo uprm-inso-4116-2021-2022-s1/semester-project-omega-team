@@ -61,6 +61,28 @@ namespace OmegaSpot.Common {
         /// <returns>True if and only if the <see cref="Status"/> is NOT <see cref="ReservationStatus.DENIED"/> or <see cref="ReservationStatus.CANCELLED"/></returns>
         public bool IsValid() { return Status != ReservationStatus.DENIED && Status != ReservationStatus.CANCELLED; }
 
+        /// <summary>Advances the state of the reservation if needed</summary>
+        public void AdvanceReservation() {
+            switch (Status) {
+                case ReservationStatus.PENDING:
+                    if (DateTime.Now > StartTime.AddMinutes(15)) { Status = ReservationStatus.DENIED; }
+                    break;
+                case ReservationStatus.APPROVED:
+                    if (DateTime.Now > StartTime.AddMinutes(15)) { Status = ReservationStatus.MISSED; }
+                    break;
+                case ReservationStatus.IN_PROGRESS:
+                    if (DateTime.Now > EndTime) { Status = ReservationStatus.COMPLETED; }
+                    break;
+                case ReservationStatus.COMPLETED:
+                case ReservationStatus.CANCELLED:
+                case ReservationStatus.DENIED:
+                case ReservationStatus.MISSED:
+                default:
+                    break;
+            }
+
+        }
+
         #endregion
 
     }
