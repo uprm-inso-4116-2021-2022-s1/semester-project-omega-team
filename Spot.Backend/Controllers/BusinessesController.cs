@@ -78,7 +78,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns></returns>
         [HttpPost("Reservations")]
-        public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID) {
+        public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
 
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
@@ -88,16 +88,46 @@ namespace OmegaSpot.Backend.Controllers {
 
             //OK, now that we've got this
 
-            var Res = await _context.Reservation
+            if (Status == null) {
+                var Res = await _context.Reservation
+                    .Include(R => R.Spot)
+                    .Include(R => R.User)
+                    .Where(R => R.Spot.Business.ID == B.ID)
+                    .OrderBy(R => R.Status).ThenByDescending(r => r.StartTime)
+                    .ToListAsync();
+    
+                foreach (Reservation R in Res) { R.AdvanceReservation(); }
+
+                return Ok(Res);
+            }
+
+            //We have a specified status we must attend to
+            var StatusRes = await _context.Reservation
                 .Include(R => R.Spot)
                 .Include(R => R.User)
-                .Where(R => R.Spot.Business.ID == B.ID)
+                .Where(R => R.Spot.Business.ID == B.ID && R.Status==Status.Value)
                 .OrderBy(R => R.Status).ThenByDescending(r => r.StartTime)
                 .ToListAsync();
 
-            foreach (Reservation R in Res) { R.AdvanceReservation(); }
+            if (Status != ReservationStatus.COMPLETED &&
+                Status != ReservationStatus.CANCELLED &&
+                Status != ReservationStatus.DENIED &&
+                Status != ReservationStatus.MISSED) {
 
-            return Ok(Res);
+                var RealRes = new List<Reservation>();
+
+                foreach (Reservation R in StatusRes) {
+                    R.AdvanceReservation();
+                    if (R.Status == Status) { RealRes.Add(R); }  //Status has not advanced
+                    else { _context.Update(R); } //The status has advanced
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(RealRes);
+            }
+
+            return Ok(StatusRes);
 
         }
 
