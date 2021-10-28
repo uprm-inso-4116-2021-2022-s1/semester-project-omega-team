@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <ApplicationIcon />
-    <OutputType>Exe</OutputType>
-    <StartupObject>OmegaSpot.Data.Program</StartupObject>
+    <OutputType>Library</OutputType>
+    <StartupObject></StartupObject>
     <RootNamespace>OmegaSpot.Data</RootNamespace>
   </PropertyGroup>
 
@@ -19,6 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
   </ItemGroup>
 
   <ItemGroup>
