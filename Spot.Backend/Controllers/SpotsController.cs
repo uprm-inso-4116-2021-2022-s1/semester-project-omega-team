@@ -84,12 +84,12 @@ namespace OmegaSpot.Backend.Controllers {
             Business B = await GetSessionBusiness(S);
             if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
 
-            if (Request.Spot.ID == Guid.Empty) {
+            if (Request.SpotID == Guid.Empty) {
                 //This is a New spot
                 Sp = new() {
                     Business = B,
-                    Description = Request.Spot.Description,
-                    Name=Request.Spot.Name
+                    Description = Request.Description,
+                    Name=Request.Name
                 };
 
                 _context.Add(Sp);
@@ -97,13 +97,13 @@ namespace OmegaSpot.Backend.Controllers {
             } else {
 
                 //This is a modified spot.
-                Sp = await _context.Spot.Include(Sp => Sp.Business).FirstOrDefaultAsync(Sp => Sp.ID == Request.Spot.ID);
+                Sp = await _context.Spot.Include(Sp => Sp.Business).FirstOrDefaultAsync(Sp => Sp.ID == Request.SpotID);
                 if (Sp == null) { return NotFound("Spot was not found"); }
                 if (Sp.Business.ID != B.ID) { return Unauthorized("Session owner isn't this spot's owner"); }
 
                 //Update the spot details
-                Sp.Description = Request.Spot.Description;
-                Sp.Name = Request.Spot.Name;
+                Sp.Description = Request.Description;
+                Sp.Name = Request.Name;
 
                 _context.Update(Sp);
             }
@@ -147,7 +147,7 @@ namespace OmegaSpot.Backend.Controllers {
             Business B = await GetSessionBusiness (S);
             if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
 
-            Spot Sp = await _context.Spot.Include(Sp => Sp.Business).FirstOrDefaultAsync(Sp => Sp.ID == Request.Spot.ID);
+            Spot Sp = await _context.Spot.Include(Sp => Sp.Business).FirstOrDefaultAsync(Sp => Sp.ID == Request.SpotID);
             if (Sp == null) { return NotFound("Plot was not found"); }
             if (Sp.Business.ID != B.ID) { return Unauthorized("Session owner isn't this Plot's owner"); }
 
