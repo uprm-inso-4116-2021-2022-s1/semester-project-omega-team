@@ -246,6 +246,8 @@ namespace OmegaSpot.Backend.Controllers {
                 .OrderBy(R => R.Status).ThenByDescending(R => R.StartTime)
                 .ToListAsync();
 
+            foreach (Reservation R in DBU) { R.AdvanceReservation(); }
+
             return Ok(DBU);
         }
 
