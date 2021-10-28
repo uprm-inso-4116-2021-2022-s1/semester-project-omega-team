@@ -6,25 +6,25 @@ namespace OmegaSpot.Common {
     public enum ReservationStatus { 
     
         /// <summary>Reservation is pending approval from the business owner</summary>
-        PENDING,
+        PENDING = 0,
 
         /// <summary>Reservation was denied by the business owner and is no longer valid.</summary>
-        DENIED,
+        DENIED = 1,
 
         /// <summary>Reservation is approved and has not been used</summary>
-        APPROVED,
+        APPROVED = 2,
 
         /// <summary>Reservation was missed, and is no longer valid</summary>
-        MISSED, 
+        MISSED = 3, 
 
         /// <summary>Reservation is currently being used and is in progress</summary>
-        IN_PROGRESS,
+        IN_PROGRESS = 4,
 
         /// <summary>Reservation is completed and was used</summary>
-        COMPLETED,
+        COMPLETED = 5,
 
         /// <summary>Reservation was cancelled (either by business or reservation owner) and is no longer valid</summary>
-        CANCELLED
+        CANCELLED = 6
     }
 
     /// <summary>Holds a SPOT Reservation</summary>
