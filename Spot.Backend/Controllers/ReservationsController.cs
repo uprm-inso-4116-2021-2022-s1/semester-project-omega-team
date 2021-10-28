@@ -62,6 +62,8 @@ namespace OmegaSpot.Backend.Controllers {
                 .FirstOrDefaultAsync(R => R.ID == Request.ReservationID);
             if (R == null) { return NotFound("Reservation was not found"); }
 
+            R.AdvanceReservation();
+
             switch (Request.NewStatus) {
                 case ReservationStatus.DENIED:
                 case ReservationStatus.APPROVED:
@@ -118,6 +120,26 @@ namespace OmegaSpot.Backend.Controllers {
             //Return the reservation
             return Ok(R);
 
+        }
+
+        /// <summary>Administrative command to advance all reservations in the database</summary>
+        /// <returns></returns>
+        [HttpGet("Advance")]
+        public async Task<IActionResult> AdvanceAllReservations() {
+
+            var Reservations = await _context.Reservation.Where(R=>
+                                        R.Status!=ReservationStatus.COMPLETED &&
+                                        R.Status != ReservationStatus.CANCELLED &&
+                                        R.Status != ReservationStatus.DENIED &&
+                                        R.Status != ReservationStatus.MISSED)
+                                    .ToListAsync(); //Get all reservations that are not in final states
+
+            Reservations.ForEach(R => R.AdvanceReservation()); //Advance them if needed
+            _context.UpdateRange(Reservations); //Update
+            await _context.SaveChangesAsync(); //Save
+
+            //Adios
+            return Ok();
         }
 
         private async Task<Business> GetSessionBusiness(Session S) {
