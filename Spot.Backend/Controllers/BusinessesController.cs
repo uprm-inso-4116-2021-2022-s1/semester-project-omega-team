@@ -145,7 +145,7 @@ namespace OmegaSpot.Backend.Controllers {
             DateTime Start = StartRange ?? DateTime.MinValue;
             DateTime End = EndRange ?? DateTime.Now;
 
-            Type ElEnum = typeof(ReservationStatus);
+            Type ElEnum = typeof(ReservationStatus); //This is here to prevent a memory leak (so the exception says when I tried to do it directly)
 
             var Count = await _context.Reservation
                 .Where(R => R.Spot.Business.ID == B.ID &&
@@ -160,8 +160,60 @@ namespace OmegaSpot.Backend.Controllers {
 
         [HttpPost("SpotStatistics")]
         public async Task<IActionResult> GetSpotBySpotStatistics([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
-            return Ok();
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
 
+            Business B = await GetSessionBusiness(S);
+            if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
+
+            DateTime Start = StartRange ?? DateTime.MinValue;
+            DateTime End = EndRange ?? DateTime.Now;
+
+            Type ElEnum = typeof(ReservationStatus);
+
+            //Get the massive amount of data
+            var Count = await _context.Reservation
+                .Where(R => R.Spot.Business.ID == B.ID &&
+                    R.StartTime > Start &&
+                    R.StartTime < End)
+                .GroupBy(R => new {
+                    R.Spot.ID, R.Spot.Name,
+                    R.Spot.Description, R.Status })
+                .OrderBy(R => R.Key.Name)
+                .Select(R => new { R.Key.ID, R.Key.Name, R.Key.Description,
+                    Status = Enum.GetName(ElEnum, R.Key.Status), Count = R.Count() })
+                .ToListAsync();
+
+            //We've essentially have all the data right now.
+            //Let's make this a lot easier to access:
+
+            //Get all the spots since we need all the spots to get all the data
+            var AllSpots = await _context.Spot.Where(S => S.Business.ID == B.ID).ToListAsync();
+
+            //This list will hold all the information on each spot
+            var List = new[] { new { ID=Guid.Empty, Name="Dummy", Description = "Dummy", TotalReservation = 0, StatusCount = new Dictionary<string,int>() } }.ToList();
+            List.Clear();
+
+            //Dictionary that'll hold the empty things
+            Dictionary<string, int> StatusDictionaryTemplate = new();
+            foreach (ReservationStatus RS in Enum.GetValues(ElEnum)) { StatusDictionaryTemplate.Add(Enum.GetName(RS), 0);}
+
+            foreach (Spot Sp in AllSpots) {
+                //Find the sublist in the big list that has the data for this spot
+                var L = Count.Where(R => R.ID == Sp.ID).ToList();
+
+                Dictionary<string, int> DS = new(StatusDictionaryTemplate);
+                int Total = 0;
+
+                foreach (var Data in L) { 
+                    DS[Data.Status] = Data.Count;
+                    Total += Data.Count;
+                }
+
+                List.Add(new { Sp.ID, Sp.Name, Sp.Description, TotalReservation = Total, StatusCount = DS });
+            }
+
+            return Ok(List.OrderByDescending(A=>A.TotalReservation));
         }
 
         private async Task<Business> GetSessionBusiness(Session S) {
