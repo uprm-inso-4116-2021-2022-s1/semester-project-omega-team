@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OmegaSpot.Common;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace OmegaSpot.Data {
-    public class SpotContext:DbContext {
+    public class SpotContext: DbContext {
 
         /// <summary>Indicates whether or not this neco context is in Postgres Mode</summary>
         public bool PostgresMode { get; private set; } = false;
@@ -104,7 +107,7 @@ namespace OmegaSpot.Data {
 
                 //We do not have a URL to connect to a postgres db. Fallback to the local or configured sql server database
                 optionsBuilder.UseSqlServer(SQLServerURL);
-            }        
+            }
         }
 
         /// <summary>Overrides on model creation to remove the plural convention</summary>
@@ -116,12 +119,14 @@ namespace OmegaSpot.Data {
             }
         }
 
+        #region tables
+
         /// <summary>Table that contains all <see cref="Common.Business"/></summary>
         public DbSet<Business> Business { get; set; }
 
         /// <summary>Table that contains all <see cref="Common.Spot"/></summary>
         public DbSet<Spot> Spot { get; set; }
-   
+
         /// <summary>Table that contains all <see cref="Common.Reservation"/></summary>
         public DbSet<Reservation> Reservation { get; set; }
 
@@ -130,6 +135,134 @@ namespace OmegaSpot.Data {
 
         /// <summary>Table that contains all <see cref="Common.Notification"/></summary>
         public DbSet<Notification> Notification { get; set; }
+
+        #endregion
+
+        #region Functions
+
+        /// <summary>Gets a list of the most reserved spots in descending order (from an optional cut off date)</summary>
+        /// <param name="Count"></param>
+        /// <param name="Cutoff"></param>
+        /// <returns></returns>
+        public async Task<List<Spot>> MostReservedSpots(int Count, DateTime? Cutoff = null) {
+            DateTime RealCutOff = Cutoff ?? DateTime.MinValue;
+
+            using SqlCommand C = new(); 
+            C.CommandText = SqlStringTopSpotsCutoff();
+            C.Parameters.Add("@Cutoff", System.Data.SqlDbType.DateTime2);
+            C.Parameters["@Cutoff"].Value = RealCutOff;
+            C.Connection = Database.GetDbConnection() as SqlConnection;
+
+            List<Spot> Spots = await TopSpotCommandToListSpot(C,Count);
+            if (Spots.Count == Count) { return Spots; }
+
+            //If we're here, it means we're out of spots and we still need more
+            await foreach (Spot S in Spot.AsAsyncEnumerable()) {
+                if (!Spots.Contains(S)) { 
+                    Spots.Add(S);
+                    if (Spots.Count == Count) { return Spots; }
+                }
+            }
+
+            //If we're here then we're out of spots entirely to add to the list so uh....
+            //b y e
+
+            return Spots;
+        }
+
+        /// <summary>Gets a list of the most reserved spots in descending order from a user</summary>
+        /// <param name="Count"></param>
+        /// <param name="Username"></param>
+        /// <param name="Filler">Whether or not to fill the list with filler spots if there aren't enough spots to reach the count</param>
+        /// <returns></returns>
+        public async Task<List<Spot>> MostReservedSpotsUser(int Count, string Username, bool Filler) {
+          
+            using SqlCommand C = new();
+            C.CommandText = SqlStringTopSpotsUser();
+            C.Parameters.Add("@Username", System.Data.SqlDbType.VarChar);
+            C.Parameters["@Username"].Value = Username;
+            C.Connection = Database.GetDbConnection() as SqlConnection;
+
+            List<Spot> Spots = await TopSpotCommandToListSpot(C, Count);
+            if (Spots.Count == Count || !Filler) { return Spots; }
+
+            //If we're here, it means we're out of spots and we still need more
+            await foreach (Spot S in Spot.AsAsyncEnumerable()) {
+                if (!Spots.Contains(S)) {
+                    Spots.Add(S);
+                    if (Spots.Count == Count) { return Spots; }
+                }
+            }
+
+            //If we're here then we're out of spots entirely to add to the list so uh....
+            //b y e
+
+            return Spots;
+        }
+
+        #endregion
+
+        #region FunctionHelpers
+
+        //why did I sign up for this recommendation system
+
+        private async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
+            List<Spot> Spots = new();
+
+            SqlDataReader Reader = await Command.ExecuteReaderAsync();
+
+            while (await Reader.ReadAsync()) {
+                Spot S = new();
+                S.ID = Reader.GetGuid(0);
+                S.Name = Reader.GetString(1);
+                S.Description = Reader.GetString(2);
+                S.Business = new() { Name = Reader.GetString(3) };
+                Spots.Add(S);
+                if (Spots.Count == Count) { return Spots; }
+            }
+
+            return Spots;
+        }
+
+        #endregion
+
+        #region SqlStrings
+
+        private string SqlStringTopSpotsCutoff() {
+            if (PostgresMode) {
+                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, Count(*) as ReservationCount " +
+                    "from \"Reservation\" as R inner join \"Spot\" as S on R.\"SpotID\" = S.\"ID\" inner join \"Business\" as B on S.\"BusinessID\" = B.\"ID\" " +
+                    "where R.\"StartTime\" > @Cutoff " +
+                    "group by R.\"SpotID\", S.\"Name\", S.\"Description\", B.\"Name\", B.\"ID\" " +
+                    "order by count(*) desc";
+            }
+
+            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, Count(*) as ReservationCount 
+                from [Reservation] R inner join [dbo].[Spot] S on R.SpotID = S.ID inner join Business B on S.BusinessID = B.ID 
+                where R.StartTime > @Cutoff 
+                group by R.SpotID, S.Name, S.Description, B.Name, B.ID 
+                order by count(*) desc";
+        }
+
+        private string SqlStringTopSpotsUser() {
+            if (PostgresMode) {
+                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, Count(*) as ReservationCount " +
+                    "from \"Reservation\" as R inner join \"Spot\" as S on R.\"SpotID\" = S.\"ID\" inner join \"Business\" as B on S.\"BusinessID\" = B.\"ID\" " +
+                    "where R.\"Username\" = @Username " +
+                    "group by R.\"SpotID\", S.\"Name\", S.\"Description\", B.\"Name\", B.\"ID\" " +
+                    "order by count(*) desc";
+            }
+
+            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, Count(*) as ReservationCount 
+                from [Reservation] R inner join [dbo].[Spot] S on R.SpotID = S.ID inner join Business B on S.BusinessID = B.ID 
+                where R.Username = @Username 
+                group by R.SpotID, S.Name, S.Description, B.Name, B.ID 
+                order by count(*) desc";
+
+        }
+
+        #endregion
+
 
     }
 }
