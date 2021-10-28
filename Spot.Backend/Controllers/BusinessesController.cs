@@ -131,6 +131,27 @@ namespace OmegaSpot.Backend.Controllers {
 
         }
 
+        /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
+        /// <param name="SessionID"></param>
+        /// <returns></returns>
+        [HttpPost("ReservationsCount")]
+        public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID) {
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            Business B = await GetSessionBusiness(S);
+            if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
+
+            Dictionary<ReservationStatus, int> ReservationCountDictionary = new();
+
+            foreach (ReservationStatus RS in Enum.GetValues(typeof(ReservationStatus))) {
+                var Res = await _context.Reservation.CountAsync(R => R.Status == RS && R.Spot.Business.ID == B.ID);
+                ReservationCountDictionary.Add(RS, Res);
+            }
+
+            return Ok(ReservationCountDictionary);
+        }
+
         private async Task<Business> GetSessionBusiness(Session S) {
             User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
             //actually we can assume a user just exists since they logged on
