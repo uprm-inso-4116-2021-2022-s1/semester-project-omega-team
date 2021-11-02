@@ -27,7 +27,11 @@ function Copyright(props) {
     );
   }
   
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 export default function LogIn() {
 
@@ -46,15 +50,17 @@ export default function LogIn() {
       return (
         <ThemeProvider theme={theme}>
           <Container component="main" maxWidth="xs">
-            <CssBaseline />
+            <CssBaseline/>
             <Box
               sx={{
                 marginTop: 8,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                background: 'white',
-                borderRadius: '10px'
+                // background: 'linear-gradient(to right top, #ecececc7, #fafafa6e)',
+                borderRadius: '30px',
+                backdropFilter: 'blur(2rem)',
+                padding: '30px'
               }}
             >
               <Typography component="h1" variant="h3" fontFamily="Lucida Sans">
@@ -71,6 +77,7 @@ export default function LogIn() {
                   name="email"
                   autoComplete="email"
                   autoFocus
+                  color="secondary"
                 />
                 <TextField
                   margin="normal"
@@ -82,9 +89,10 @@ export default function LogIn() {
                   id="password"
                   variant="standard"
                   autoComplete="current-password"
+                  color="secondary"
                 />
                 <FormControlLabel
-                  control={<Switch value="" color="primary" />}
+                  control={<Switch value="" color="secondary"/>}
                   label="Remember me"
                 />
                 <Button
@@ -92,7 +100,7 @@ export default function LogIn() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2, borderRadius: '50px' }}
-                  color="primary"
+                  color="secondary"
                   size="large"
                   onClick={() => {
                       history.push("/mainpage");
@@ -102,12 +110,12 @@ export default function LogIn() {
                 </Button>
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2">
+                    <Link href="#" variant="body2" color="secondary">
                       Forgot password?
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="/SignUp" variant="body2">
+                    <Link href="/SignUp" variant="body2" color="secondary">
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </Grid>
