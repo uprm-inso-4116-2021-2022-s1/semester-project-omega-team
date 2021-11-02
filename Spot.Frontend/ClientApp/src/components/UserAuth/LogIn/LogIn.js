@@ -77,7 +77,7 @@ export default function LogIn() {
                   name="email"
                   autoComplete="email"
                   autoFocus
-                  color="secondary"
+                  // color="secondary"
                 />
                 <TextField
                   margin="normal"
@@ -89,10 +89,10 @@ export default function LogIn() {
                   id="password"
                   variant="standard"
                   autoComplete="current-password"
-                  color="secondary"
+                  // color="secondary"
                 />
                 <FormControlLabel
-                  control={<Switch value="" color="secondary"/>}
+                  control={<Switch value="" /*color="secondary"*//>}
                   label="Remember me"
                 />
                 <Button
@@ -100,7 +100,7 @@ export default function LogIn() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2, borderRadius: '50px' }}
-                  color="secondary"
+                  // color="secondary"
                   size="large"
                   onClick={() => {
                       history.push("/mainpage");
@@ -110,12 +110,12 @@ export default function LogIn() {
                 </Button>
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2" color="secondary">
+                    <Link href="#" variant="body2" /*color="secondary"*/>
                       Forgot password?
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="/SignUp" variant="body2" color="secondary">
+                    <Link href="/SignUp" variant="body2" /*color="secondary"*/>
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </Grid>

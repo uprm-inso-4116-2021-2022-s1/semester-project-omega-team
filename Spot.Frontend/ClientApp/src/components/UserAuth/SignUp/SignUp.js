@@ -25,7 +25,11 @@ function Copyright(props) {
     );
 }
 
-const theme = createTheme();
+const theme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
 
 export default function SignUp() {
 
