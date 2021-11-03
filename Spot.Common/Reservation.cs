@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OmegaSpot.Common {
 
@@ -33,6 +35,7 @@ namespace OmegaSpot.Common {
         #region Properties
 
         /// <summary>ID of this Reservation</summary>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid ID { get; set; }
 
         /// <summary>Reason for this reservation (usually for requests that are <see cref="ReservationStatus.PENDING"/>)</summary>

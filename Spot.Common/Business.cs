@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace OmegaSpot.Common {
@@ -10,6 +11,7 @@ namespace OmegaSpot.Common {
         #region Properties
 
         /// <summary>ID of this business</summary>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid ID { get; set; }
 
         /// <summary>Name of this business</summary>
