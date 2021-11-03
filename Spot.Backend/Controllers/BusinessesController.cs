@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OmegaSpot.Common;
 using OmegaSpot.Data;
+using OmegaSpot.Backend.Requests;
 
 namespace OmegaSpot.Backend.Controllers {
 
@@ -31,6 +32,28 @@ namespace OmegaSpot.Backend.Controllers {
 
             //Now we return it with status OK to let the front-end know its OK
             return Ok(Bs);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateBusiness(UpdateBusinessDetailsRequest Request) {
+            Session S = SessionManager.Manager.FindSession(Request.SessionID);
+            if (S == null) { return Unauthorized("Invalid Session"); }
+
+            Business B = await GetSessionBusiness(S);
+            if (B == null) { return Unauthorized("User is not a business owner, or does not have a business set up to be updated"); }
+
+            B.Name = Request.Name;
+            B.OpenTime = Request.OpenTime;
+            B.CloseTime = Request.CloseTime;
+            B.Email = Request.Email;
+            B.PhoneNumbers = Request.PhoneNumbers;
+            B.Website = Request.Website;
+            B.ReservationsRequireApproval = Request.ReservationsRequireApproval;
+
+            _context.Update(B);
+            await _context.SaveChangesAsync();
+
+            return Ok(B);
         }
 
         /// <summary>Gets busines with specified ID</summary>
