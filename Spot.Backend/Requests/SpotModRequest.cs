@@ -12,8 +12,14 @@ namespace OmegaSpot.Backend.Requests {
         /// <summary>ID of the session execuitng this request</summary>
         public Guid SessionID { get; set; }
 
-        /// <summary>Spot to create, modify, or delete. This spot should NOT contain an image</summary>
-        public Spot Spot { get; set; }
+        /// <summary>ID of the spot to modify (Should be blank when creating)</summary>
+        public Guid SpotID { get; set; }
+
+        /// <summary>Name of the spot</summary>
+        public string Name { get; set; }
+
+        /// <summary>Description of the spot</summary>
+        public string Description { get; set; }
 
     }
 }
