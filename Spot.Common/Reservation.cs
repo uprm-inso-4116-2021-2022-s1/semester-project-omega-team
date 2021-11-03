@@ -38,22 +38,22 @@ namespace OmegaSpot.Common {
         public Guid ID { get; set; }
 
         /// <summary>Reason for this reservation (usually for requests that are <see cref="ReservationStatus.PENDING"/>)</summary>
-        public string Reason { get; set; }
+        public string Reason { get; set; } = "";
 
         /// <summary>Date and time this reservation starts</summary>
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; } = DateTime.Now;
 
         /// <summary>Date and time this reservetion ends</summary>
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; } = DateTime.Now.AddMinutes(60);
 
         /// <summary>Spot this reservation reserves</summary>
-        public Spot Spot { get; set; }
+        public Spot? Spot { get; set; }
 
         /// <summary>User this reservation belongs to</summary>
-        public User User { get; set; }
+        public User? User { get; set; }
 
         /// <summary>Status of this reservation</summary>
-        public ReservationStatus Status { get; set; }
+        public ReservationStatus Status { get; set; } = ReservationStatus.PENDING;
 
         #endregion
 
