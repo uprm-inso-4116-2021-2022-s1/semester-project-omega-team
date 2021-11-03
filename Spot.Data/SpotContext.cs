@@ -187,7 +187,7 @@ namespace OmegaSpot.Data {
             //If we're here, it means we're out of spots and we still need more
 
             int NewCount = Count - Spots.Count;
-            Spots.AddRange(await MostReservedSpots(Count));
+            Spots.AddRange(await MostReservedSpots(NewCount));
 
             //If we're here then we're out of spots entirely to add to the list so uh....
             //b y e
