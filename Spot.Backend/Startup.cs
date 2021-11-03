@@ -6,14 +6,23 @@ using Microsoft.OpenApi.Models;
 using OmegaSpot.Data;
 
 namespace OmegaSpot.Backend {
+
+    /// <summary>Class that ahndles startup of the backend</summary>
     public class Startup {
+
+        /// <summary>Creates a startup object</summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
+        /// <summary>Holds configuration of the startup</summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
@@ -24,7 +33,11 @@ namespace OmegaSpot.Backend {
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
         public void Configure(IApplicationBuilder app) {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();

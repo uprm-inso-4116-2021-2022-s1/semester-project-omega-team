@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OmegaSpot.Backend.Requests {
+﻿namespace OmegaSpot.Backend.Requests {
+    /// <summary>Request to handle registration of a user</summary>
     public class UserRegistrationRequest {
 
         /// <summary>username of the user to register</summary>

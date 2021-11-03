@@ -159,6 +159,8 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
         /// <param name="SessionID"></param>
+        /// <param name="StartRange"></param>
+        /// <param name="EndRange"></param>
         /// <returns></returns>
         [HttpPost("ReservationsCount")]
         public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
