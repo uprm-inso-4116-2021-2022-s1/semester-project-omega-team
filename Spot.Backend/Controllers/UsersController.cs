@@ -306,5 +306,40 @@ namespace OmegaSpot.Backend.Controllers {
 
         #endregion
 
+        //This region handles the registering of users.
+        #region Registration
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(UserRegistrationRequest Request) {
+
+            //See if we have a user with the given name
+            if (await _context.User.AnyAsync(U => U.Username == Request.Username))
+                    return BadRequest("User with given username already exists!"); //no no no
+
+            //OK then now register
+            User U = new() {
+                Username = Request.Username,
+                Name = Request.Name,
+                Password = Request.Password,
+                IsOwner = Request.IsOwner
+            };
+
+            _context.User.Add(U);
+
+            if (U.IsOwner) {
+
+                //Add an empty business
+                Business B = new() {
+                    Owner = U,
+                    Name = U.Name + "'s Business",
+                };
+
+                _context.Add(B);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(U);
+        }
+
+        #endregion
     }
 }
