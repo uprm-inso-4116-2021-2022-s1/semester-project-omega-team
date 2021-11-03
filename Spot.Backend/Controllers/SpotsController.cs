@@ -13,18 +13,29 @@ using System.Drawing.Imaging;
 
 namespace OmegaSpot.Backend.Controllers {
     
+    /// <summary>Controller that handles all spot related operations</summary>
     [Route("Spot")]
     [ApiController]
     public class SpotsController : Controller {
+
+        /// <summary>Context that'll handle all operations to the DB</summary>
         private readonly SpotContext _context;
 
+        /// <summary>Holds the default image for plots so that we don't have to load it more than one time</summary>
         private readonly byte[] DEFAULT_IMAGE;
 
+        /// <summary>Creates a Spot controller</summary>
+        /// <param name="context"></param>
         public SpotsController(SpotContext context) { 
             _context = context; 
             DEFAULT_IMAGE= ImageToByteArray(Properties.Resources.DefaultSpot, ImageFormat.Jpeg);
         }
 
+        /// <summary>Gets a list of all spots</summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="Search"></param>
+        /// <returns></returns>
         // GET: SPOT
         [HttpGet]
         public async Task<IActionResult> Index(int? start, int? end, string Search) {
@@ -55,6 +66,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Assets);
         }
 
+        /// <summary>Gets a spot's details</summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: SPOT/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(Guid? id) {
@@ -67,6 +81,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(asset);   
         }
 
+        /// <summary>Gets a list of the most reserved spots in the last 7 days</summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         //GET: SPOT/Featured
         [HttpGet("Featured")]
         public async Task<IActionResult> GenericFeatured(int count) {
@@ -74,6 +91,10 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(await _context.MostReservedSpots(count,DateTime.Now.AddDays(-7)));
         }
 
+        /// <summary>Gets a list of spots featured for a user of the given session</summary>
+        /// <param name="SessionID"></param>
+        /// <param name="Count"></param>
+        /// <returns></returns>
         //Post: SPOT/Featured
         [HttpPost("Featured")]
         public async Task<IActionResult> UserFeatured([FromBody] Guid SessionID, [FromQuery] int Count) {
@@ -92,8 +113,11 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Spots);
         }
 
-
-
+        /// <summary>Gets a spot's image (resizing if necessary)</summary>
+        /// <param name="ID"></param>
+        /// <param name="Width"></param>
+        /// <param name="Height"></param>
+        /// <returns></returns>
         [HttpGet("Images/{id}.jpg")]
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
             //Get the spot
@@ -116,6 +140,9 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
 
+        /// <summary>Handles the creation or editing of a spot based on if the request has a spot ID or not</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         // POST: SPOT
         [HttpPost]
         public async Task<IActionResult> CreateEdit(SpotModRequest Request) {
@@ -155,6 +182,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Sp);
         }
 
+        /// <summary>Handles upload and saving of an image to DB for a spot</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         // POST: SPOT/Image
         [HttpPost("Image")]
         [DisableRequestSizeLimit]
@@ -180,6 +210,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Sp);
         }
 
+        /// <summary>Delets a spot from the DB</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         //POST: SPOT
         [HttpDelete]
         public async Task<IActionResult> Delete(SpotModRequest Request) {
@@ -198,6 +231,11 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Sp);
         }
 
+        #region Helper Functions
+
+        /// <summary>Helper function to get the business owned by the user tied to given business</summary>
+        /// <param name="S"></param>
+        /// <returns></returns>
         private async Task<Business> GetSessionBusiness(Session S) {
             User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
             //actually we can assume a user just exists since they logged on
@@ -206,6 +244,11 @@ namespace OmegaSpot.Backend.Controllers {
             return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
         }
 
+        /// <summary>Function to resize a given image</summary>
+        /// <param name="I"></param>
+        /// <param name="Width"></param>
+        /// <param name="Height"></param>
+        /// <returns></returns>
         public static Image ResizeImage(Image I, int? Width, int? Height) {
             if (Width == null && Height == null) { return I; } //No resize needed
 
@@ -268,5 +311,7 @@ namespace OmegaSpot.Backend.Controllers {
             return ImageToByteArray(ByteArrayToImage(B), IF);
 
         }
+
+        #endregion
     }
 }
