@@ -189,15 +189,6 @@ namespace OmegaSpot.Data {
             int NewCount = Count - Spots.Count;
             Spots.AddRange(await MostReservedSpots(Count));
 
-            //Should we check for repeats?
-
-//            foreach (Spot S in await MostReservedSpots(NewCount)) {
-//                if (!Spots.Contains(S)) {
-//                    Spots.Add(S);
-//                    if (Spots.Count == Count) { return Spots; }
-//                }
-//            }
-
             //If we're here then we're out of spots entirely to add to the list so uh....
             //b y e
 
