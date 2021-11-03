@@ -19,13 +19,13 @@ namespace OmegaSpot.Data.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Name",
                 table: "User",
-                type: "nvarchar(max)",
+                type: "varchar",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Reason",
                 table: "Reservation",
-                type: "nvarchar(max)",
+                type: "varchar",
                 nullable: true);
         }
 
