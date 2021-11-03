@@ -30,6 +30,12 @@ export default function Statistics() {
                 </Typography>
             </Divider>
             <Grid container spacing={3}>
+                {/* Recent Reservations */}
+                <Grid item xs={12}>
+                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                        <Reservations />
+                    </Paper>
+                </Grid>
                 {/* Chart */}
                 <Grid item xs={12} md={8} lg={9}>
                     <Paper
@@ -54,12 +60,6 @@ export default function Statistics() {
                         }}
                     >
                         <Visitors />
-                    </Paper>
-                </Grid>
-                {/* Recent Reservations */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <Reservations />
                     </Paper>
                 </Grid>
             </Grid>

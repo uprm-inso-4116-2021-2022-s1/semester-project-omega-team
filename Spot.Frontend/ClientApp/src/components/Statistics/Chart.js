@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
-import Title from './Title';
+import Title from '../Title/Title';
 
 // Generate Sales Data
 function createData(day, amount) {
@@ -16,8 +16,8 @@ const data = [
   createData('Friday', 1500),
   createData('Saturday', 2000),
   createData('Sunday', 2400),
-//   createData('21:00', 2400),
-//   createData('24:00', undefined),
+  //   createData('21:00', 2400),
+  //   createData('24:00', undefined),
 ];
 
 export default function Chart() {

@@ -9,53 +9,42 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import TableFooter from '@mui/material/TableFooter';
+import Grid from '@mui/material/Grid';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import Title from '../Title/Title';
 
 const columns = [
     { id: 'name', label: 'Spot Name', minWidth: 170 },
     { id: 'description', label: 'Spot Description', minWidth: 100 },
-    {
-        id: 'address',
-        label: 'Address',
-        minWidth: 170,
-        align: 'right',
-
-    },
-    {
-        id: 'available',
-        label: 'Available',
-        minWidth: 170,
-        align: 'right',
-
-    },
-    {
-        id: 'capacity',
-        label: 'Capacity',
-        minWidth: 170,
-        align: 'right',
-
-    },
+    { id: 'address', label: 'Address', minWidth: 170 },
+    { id: 'available', label: 'Available', minWidth: 100 },
+    { id: 'capacity', label: 'Capacity', minWidth: 100 },
 ];
 
-function createData(name, description, date, address, available, capacity) {
-    return { name, description, date, address, available, capacity };
+function createData(name, description, address, available, capacity) {
+    return { name, description, address, available, capacity };
 }
 
 const rows = [
-    createData('Spot Student A', 'Building A', 1324171354, 3287263),
-    createData('Carlos', 'City B', 1403500365, 9596961),
-    createData('Ricardo', 'Base C', 60483973, 301340),
-    createData('Bryan', 'US', 327167434, 9833520),
-    createData('Roberto', 'CA', 37602103, 9984670),
-    createData('Elver Galarga', 'AU', 25475400, 7692024),
-    createData('Agustín', 'DE', 83019200, 357578),
-    createData('Jose', 'IE', 4857000, 70273),
-    createData('Dennis', 'MX', 126577691, 1972550),
-    createData('Diego', 'JP', 126317000, 377973),
-    createData('Molusco', 'FR', 67022000, 640679),
-    createData('Pedro', 'GB', 67545757, 242495),
-    createData('Benito', 'RU', 146793744, 17098246),
-    createData('Maria', 'NG', 200962417, 923768),
-    createData('Alana', 'BR', 210147125, 8515767),
+    createData('Spot A', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot B', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'No', '68'),
+    createData('Spot C', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot D', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot E', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot F', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'No', '68'),
+    createData('Spot G', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot H', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot I', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'No', '68'),
+    createData('Spot J', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'No', '68'),
+    createData('Spot K', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot L', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot M', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'No', '68'),
+    createData('Spot N', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
+    createData('Spot O', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Building A, Street B, City C, PR 00420', 'Yes', '68'),
 ];
 
 export default function ManageSpots() {
@@ -73,7 +62,7 @@ export default function ManageSpots() {
 
     return (
         <div>
-            <Divider sx={{ p: 5 }}>
+            <Divider sx={{ p: 1 }}>
                 <Typography component="h2" variant="h4" color="gray" gutterBottom>
                     Spots
                 </Typography>
@@ -92,6 +81,12 @@ export default function ManageSpots() {
                                         {column.label}
                                     </TableCell>
                                 ))}
+                                <TableCell>
+                                    Edit
+                                </TableCell>
+                                <TableCell>
+                                    Delete
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -110,21 +105,47 @@ export default function ManageSpots() {
                                                     </TableCell>
                                                 );
                                             })}
+                                            <TableCell >
+                                                <IconButton aria-label="edit">
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton aria-label="delete">
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+
+                <TableFooter sx={{ display: 'flex' }}>
+                    <Grid
+                        container
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Grid item sx={{ p: 1 }}>
+                            <Button variant="contained">Add New</Button>
+                        </Grid>
+                        <Grid item>
+                            <TablePagination
+                                rowsPerPageOptions={[10, 25, 100]}
+                                component="div"
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        </Grid>
+                    </Grid>
+
+                </TableFooter>
             </Paper>
         </div>
     );

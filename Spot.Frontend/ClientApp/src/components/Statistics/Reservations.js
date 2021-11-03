@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import Title from '../Title/Title'
 
 const columns = [
     { id: 'name', label: 'Name', minWidth: 170 },
@@ -71,7 +72,8 @@ export default function Reservations() {
 
     return (
         <div>
-            <TableContainer sx={{ maxHeight: 440 }}>
+            <TableContainer sx={{ maxHeight: 375 }}>
+                <Title>Recent Reservations</Title>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
