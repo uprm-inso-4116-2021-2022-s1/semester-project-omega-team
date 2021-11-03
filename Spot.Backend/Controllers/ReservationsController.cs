@@ -40,7 +40,20 @@ namespace OmegaSpot.Backend.Controllers {
             Spot Spot = await _context.Spot.Include(S=>S.Business).FirstOrDefaultAsync(S=>S.ID==Request.SpotID); 
             if (Spot == null) { return NotFound("Spot was not found"); }
 
-            //TODO: CHECK IF THE RESERVATION FALLS WITHIN THE OPEN/CLOSE TIMES
+            //If the spot is not open all the time
+            if (!Spot.Business.Is24Hours) {
+                //Ensure the start time is between open and close time
+                if (!TimeBetween(Spot.Business.OpenTime, Spot.Business.CloseTime, Request.StartTime) ||
+                    !TimeBetween(Spot.Business.OpenTime, Spot.Business.CloseTime, Request.EndTime)) {
+                    return BadRequest("Reservation starts or ends outside of business hours");
+                }
+
+                //Ensure the start and end time of this request are on the same day of the same month of the same year
+                if (!DatesSame(Request.StartTime, Request.EndTime)) {
+                    return BadRequest("Multi-Day reservations are not allowed on stores not open 24 hours. Please split your reservation into multiple for each given day.");
+                }
+            } //Else we don't need to because any time will be valid according to business open/close times
+
 
             //Check if any conflict with the reservation
             bool Conflicts = await _context.Reservation.AnyAsync(R=> R.Spot.ID==Request.SpotID && (
@@ -164,6 +177,8 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok();
         }
 
+        #region Helper Functions
+
         /// <summary>Helper function to get the business owned by the user tied to given business</summary>
         /// <param name="S"></param>
         /// <returns></returns>
@@ -174,6 +189,35 @@ namespace OmegaSpot.Backend.Controllers {
 
             return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
         }
+
+        /// <summary>Checks that the dates (months, year, and day) of two datetimes are the same (Ignores time)</summary>
+        /// <param name="Start"></param>
+        /// <param name="End"></param>
+        /// <returns></returns>
+        private bool DatesSame(DateTime Start, DateTime End) { return Start.Year == End.Year && Start.Month == End.Month && Start.Day == End.Day; }
+
+        /// <summary>Checks that a given time is between the start and end time. Ignores Date</summary>
+        /// <param name="Start"></param>
+        /// <param name="End"></param>
+        /// <param name="Time"></param>
+        /// <returns></returns>
+        private bool TimeBetween(DateTime Start, DateTime End, DateTime Time) {
+
+            //Lets create a copy of each datetime with the day instead being `now`
+            DateTime TodayStart, TodayEnd, TodayTime;
+            TodayStart = MakeToday(Start);
+            TodayEnd = MakeToday(End);
+            TodayTime = MakeToday(Time);
+            return TodayStart < TodayTime && TodayTime < TodayEnd;
+
+        }
+
+        /// <summary>Makes a copy of the datetime with the month, year, and day of today. Preserves its time.</summary>
+        /// <param name="Time"></param>
+        /// <returns></returns>
+        private DateTime MakeToday(DateTime Time) { return new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, Time.Hour, Time.Minute, Time.Second); }
+
+        #endregion
 
     }
 }
