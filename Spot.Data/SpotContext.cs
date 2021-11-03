@@ -201,7 +201,7 @@ namespace OmegaSpot.Data {
 
         //why did I sign up for this recommendation system
 
-        private async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
+        private static async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
             List<Spot> Spots = new();
 
             SqlDataReader Reader = await Command.ExecuteReaderAsync();
