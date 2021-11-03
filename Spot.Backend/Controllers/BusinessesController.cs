@@ -74,5 +74,71 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Spots);
         }
 
+        /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
+        /// <param name="SessionID"></param>
+        /// <returns></returns>
+        [HttpPost("Reservations")]
+        public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
+
+            Session S = SessionManager.Manager.FindSession(SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            Business B = await GetSessionBusiness(S);
+            if (B == null) { return NotFound("Business not found, or session owner is not a business"); }
+
+            //OK, now that we've got this
+
+            if (Status == null) {
+                var Res = await _context.Reservation
+                    .Include(R => R.Spot)
+                    .Include(R => R.User)
+                    .Where(R => R.Spot.Business.ID == B.ID)
+                    .OrderByDescending(r => r.StartTime)
+                    .ToListAsync();
+    
+                foreach (Reservation R in Res) { R.AdvanceReservation(); }
+
+                return Ok(Res);
+            }
+
+            //We have a specified status we must attend to
+            var StatusRes = await _context.Reservation
+                .Include(R => R.Spot)
+                .Include(R => R.User)
+                .Where(R => R.Spot.Business.ID == B.ID && R.Status==Status.Value)
+                .OrderByDescending(r => r.StartTime)
+                .ToListAsync();
+
+            if (Status != ReservationStatus.COMPLETED &&
+                Status != ReservationStatus.CANCELLED &&
+                Status != ReservationStatus.DENIED &&
+                Status != ReservationStatus.MISSED) {
+
+                var RealRes = new List<Reservation>();
+
+                foreach (Reservation R in StatusRes) {
+                    R.AdvanceReservation();
+                    if (R.Status == Status) { RealRes.Add(R); }  //Status has not advanced
+                    else { _context.Update(R); } //The status has advanced
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(RealRes);
+            }
+
+            return Ok(StatusRes);
+
+        }
+
+        private async Task<Business> GetSessionBusiness(Session S) {
+            User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
+            //actually we can assume a user just exists since they logged on
+            if (!U.IsOwner) { return null; }
+
+            return await _context.Business.FirstOrDefaultAsync(B => B.Owner.Username == U.Username);
+        }
+
+
     }
 }

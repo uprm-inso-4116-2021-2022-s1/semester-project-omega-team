@@ -235,18 +235,53 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns></returns>
         [HttpPost("Reservations")]
-        public async Task<IActionResult> UserReservations(Guid SessionID) {
+        public async Task<IActionResult> UserReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
 
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
-            //Find Reservations
-            List<Reservation> DBU = await _context.Reservation
+            if (Status == null) {
+
+                //Find Reservations
+                List<Reservation> DBU = await _context.Reservation
                 .Include(R => R.Spot).ThenInclude(S => S.Business)
-                .OrderBy(R => R.Status).ThenByDescending(R => R.StartTime)
+                .OrderByDescending(R => R.StartTime)
+                .Where(R => R.User.Username == S.UserID)
                 .ToListAsync();
 
-            return Ok(DBU);
+                foreach (Reservation R in DBU) { R.AdvanceReservation(); }
+
+                return Ok(DBU);
+
+            }
+
+            //We have a specified status we must attend to
+            List<Reservation> StatusRes = await _context.Reservation
+            .Include(R => R.Spot).ThenInclude(S => S.Business)
+            .OrderByDescending(R => R.StartTime)
+            .Where(R => R.User.Username == S.UserID && R.Status==Status.Value)
+            .ToListAsync();
+
+            if (Status != ReservationStatus.COMPLETED &&
+                Status != ReservationStatus.CANCELLED &&
+                Status != ReservationStatus.DENIED &&
+                Status != ReservationStatus.MISSED) {
+
+                var RealRes = new List<Reservation>();
+
+                foreach (Reservation R in StatusRes) {
+                    R.AdvanceReservation();
+                    if (R.Status == Status) { RealRes.Add(R); }  //Status has not advanced
+                    else { _context.Update(R); } //The status has advanced
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(RealRes);
+            }
+
+            return Ok(StatusRes);
+
         }
 
         /// <summary>Gets business of the user tied to the given session id if said user is a business owner</summary>
