@@ -102,6 +102,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
         /// <param name="SessionID"></param>
+        /// <param name="Status"></param>
         /// <returns></returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {

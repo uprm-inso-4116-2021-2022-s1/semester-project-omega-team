@@ -36,6 +36,7 @@
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
             <summary>Gets reservations for a user's business (if they're an owner)</summary>
             <param name="SessionID"></param>
+            <param name="Status"></param>
             <returns></returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservationsCount(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
