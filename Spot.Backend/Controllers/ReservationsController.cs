@@ -23,7 +23,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Creates a reservation with given details from the create reservation request</summary>
         /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <returns>Reservation object representing created reservation</returns>
         [HttpPost]
         public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
 
@@ -82,7 +82,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
         /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <returns>Updated reservation object</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateReservation(UpdateReservationRequest Request) {
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
@@ -158,7 +158,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Administrative command to advance all reservations in the database</summary>
-        /// <returns></returns>
+        /// <returns>Nothing</returns>
         [HttpGet("Advance")]
         public async Task<IActionResult> AdvanceAllReservations() {
 

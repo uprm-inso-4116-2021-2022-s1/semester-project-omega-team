@@ -223,7 +223,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets details of the user tied to the given session id</summary>
         /// <param name="SessionID"></param>
-        /// <returns></returns>
+        /// <returns>User object for given session's tied user</returns>
         [HttpPost]
         public async Task<IActionResult> UserDetails(Guid SessionID) {
 
@@ -239,7 +239,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <summary>Gets reservations of the user tied to the given session id</summary>
         /// <param name="SessionID"></param>
         /// <param name="Status"></param>
-        /// <returns></returns>
+        /// <returns>List of reservations from the given session's tied user</returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> UserReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
 
@@ -292,7 +292,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets business of the user tied to the given session id if said user is a business owner</summary>
         /// <param name="SessionID"></param>
-        /// <returns></returns>
+        /// <returns>Business of the session's tied user</returns>
         [HttpPost("Business")]
         public async Task<IActionResult> UserBusiness(Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
@@ -317,7 +317,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Regtisters a user</summary>
         /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <returns>User of the registered user</returns>
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegistrationRequest Request) {
 
@@ -341,7 +341,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Registers a business</summary>
         /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <returns>Object with registered user and registered business</returns>
         [HttpPost("RegisterBusiness")]
         public async Task<IActionResult> RegisterBusiness(BusinessRegistrationRequest Request) {
             //Register the user
