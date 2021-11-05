@@ -330,23 +330,12 @@ namespace OmegaSpot.Backend.Controllers {
                 Username = Request.Username,
                 Name = Request.Name,
                 Password = Request.Password,
-                IsOwner = Request.IsOwner
+                IsOwner = false
             };
 
             _context.User.Add(U);
-
-            if (U.IsOwner) {
-
-                //Add an empty business
-                Business B = new() {
-                    Owner = U,
-                    Name = U.Name + "'s Business",
-                };
-
-                _context.Add(B);
-            }
-
             await _context.SaveChangesAsync();
+
             return Ok(U);
         }
 
