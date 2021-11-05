@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using OmegaSpot.Data;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace OmegaSpot.Backend {
 
@@ -29,7 +32,21 @@ namespace OmegaSpot.Backend {
             services.AddDbContext<SpotContext>();
 
             services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Spot.Backend", Version = "v1" });
+                c.SwaggerDoc("v1",
+                    new OpenApiInfo {
+                        Title = "Spot Backend API",
+                        Version = "v1",
+                        Description = "Spot's backend API that handles all operations for reserving/managing/editing spots",
+                        Contact = new() {
+                            Email = "igtampe@gmail.com",
+                            Name = "Chopo",
+                            Url = new("https://github.com/igtampe")
+                        }
+                    });
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
