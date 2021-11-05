@@ -187,16 +187,7 @@ namespace OmegaSpot.Data {
             //If we're here, it means we're out of spots and we still need more
 
             int NewCount = Count - Spots.Count;
-            Spots.AddRange(await MostReservedSpots(Count));
-
-            //Should we check for repeats?
-
-//            foreach (Spot S in await MostReservedSpots(NewCount)) {
-//                if (!Spots.Contains(S)) {
-//                    Spots.Add(S);
-//                    if (Spots.Count == Count) { return Spots; }
-//                }
-//            }
+            Spots.AddRange(await MostReservedSpots(NewCount));
 
             //If we're here then we're out of spots entirely to add to the list so uh....
             //b y e
@@ -210,7 +201,7 @@ namespace OmegaSpot.Data {
 
         //why did I sign up for this recommendation system
 
-        private async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
+        private static async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
             List<Spot> Spots = new();
 
             SqlDataReader Reader = await Command.ExecuteReaderAsync();
@@ -220,7 +211,10 @@ namespace OmegaSpot.Data {
                 S.ID = Reader.GetGuid(0);
                 S.Name = Reader.GetString(1);
                 S.Description = Reader.GetString(2);
-                S.Business = new() { Name = Reader.GetString(3) };
+                S.Business = new() {
+                    ID = Reader.GetGuid(4),
+                    Name = Reader.GetString(3) 
+                };
                 Spots.Add(S);
                 if (Spots.Count == Count) { return Spots; }
             }
@@ -234,14 +228,14 @@ namespace OmegaSpot.Data {
 
         private string SqlStringTopSpotsCutoff() {
             if (PostgresMode) {
-                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, Count(*) as ReservationCount " +
+                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, B.\"ID\" as BusinessID, Count(*) as ReservationCount " +
                     "from \"Reservation\" as R inner join \"Spot\" as S on R.\"SpotID\" = S.\"ID\" inner join \"Business\" as B on S.\"BusinessID\" = B.\"ID\" " +
                     "where R.\"StartTime\" > @Cutoff " +
                     "group by R.\"SpotID\", S.\"Name\", S.\"Description\", B.\"Name\", B.\"ID\" " +
                     "order by count(*) desc";
             }
 
-            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, Count(*) as ReservationCount 
+            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, B.ID as BusinessID, Count(*) as ReservationCount 
                 from [Reservation] R inner join [dbo].[Spot] S on R.SpotID = S.ID inner join Business B on S.BusinessID = B.ID 
                 where R.StartTime > @Cutoff 
                 group by R.SpotID, S.Name, S.Description, B.Name, B.ID 
@@ -250,14 +244,14 @@ namespace OmegaSpot.Data {
 
         private string SqlStringTopSpotsUser() {
             if (PostgresMode) {
-                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, Count(*) as ReservationCount " +
+                return "Select r.\"SpotID\" as SpotID, S.\"Name\" as SpotName, S.\"Description\" as SpotDescription, B.\"Name\" as BusinessName, B.\"ID\" as BusinessID, Count(*) as ReservationCount " +
                     "from \"Reservation\" as R inner join \"Spot\" as S on R.\"SpotID\" = S.\"ID\" inner join \"Business\" as B on S.\"BusinessID\" = B.\"ID\" " +
                     "where R.\"Username\" = @Username " +
                     "group by R.\"SpotID\", S.\"Name\", S.\"Description\", B.\"Name\", B.\"ID\" " +
                     "order by count(*) desc";
             }
 
-            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, Count(*) as ReservationCount 
+            return @"Select R.SpotID, S.Name as SpotName, S.Description as SpotDescription, B.Name as BusinessName, B.ID as BusinessID, Count(*) as ReservationCount 
                 from [Reservation] R inner join [dbo].[Spot] S on R.SpotID = S.ID inner join Business B on S.BusinessID = B.ID 
                 where R.Username = @Username 
                 group by R.SpotID, S.Name, S.Description, B.Name, B.ID 

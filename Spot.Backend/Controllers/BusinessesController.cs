@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OmegaSpot.Common;
 using OmegaSpot.Data;
@@ -11,6 +10,7 @@ using OmegaSpot.Backend.Requests;
 
 namespace OmegaSpot.Backend.Controllers {
 
+    /// <summary>Controller that handles all business operations</summary>
     [Route("Business")] //This indicates the URL Route to bind this controler to. Suppose our address is http://localhost : this controller will be mapped to http://localhost/Business
     [ApiController] //This indicates this is an API Controller
     public class BusinessesController: Controller {
@@ -33,7 +33,10 @@ namespace OmegaSpot.Backend.Controllers {
             //Now we return it with status OK to let the front-end know its OK
             return Ok(Bs);
         }
-
+        
+        /// <summary>Updates busienss owned by user tied to session within request to have given new details</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> UpdateBusiness(UpdateBusinessDetailsRequest Request) {
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
@@ -99,6 +102,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
         /// <param name="SessionID"></param>
+        /// <param name="Status"></param>
         /// <returns></returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
@@ -156,6 +160,8 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
         /// <param name="SessionID"></param>
+        /// <param name="StartRange"></param>
+        /// <param name="EndRange"></param>
         /// <returns></returns>
         [HttpPost("ReservationsCount")]
         public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
@@ -181,6 +187,11 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(Count);
         }
 
+        /// <summary>Gets a spot's Number of reservations grouped by current status</summary>
+        /// <param name="SessionID"></param>
+        /// <param name="StartRange"></param>
+        /// <param name="EndRange"></param>
+        /// <returns></returns>
         [HttpPost("SpotStatistics")]
         public async Task<IActionResult> GetSpotBySpotStatistics([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
             Session S = SessionManager.Manager.FindSession(SessionID);
@@ -239,6 +250,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(List.OrderByDescending(A=>A.TotalReservation));
         }
 
+        /// <summary>Helper function to get the business owned by the user tied to given business</summary>
+        /// <param name="S"></param>
+        /// <returns></returns>
         private async Task<Business> GetSessionBusiness(Session S) {
             User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
             //actually we can assume a user just exists since they logged on

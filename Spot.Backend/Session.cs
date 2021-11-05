@@ -14,6 +14,7 @@ namespace OmegaSpot.Backend {
         /// <summary>User tied to this Session</summary>
         public string UserID { get; }
 
+        /// <summary>Determines whether or not this session is expired</summary>
         public bool Expired { get { return DateTime.Now > ExpirationDate; } }
 
         /// <summary>Creates a session for the given UserID</summary>

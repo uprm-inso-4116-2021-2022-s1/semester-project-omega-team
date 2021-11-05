@@ -10,11 +10,16 @@ using OmegaSpot.Backend.Requests;
 
 namespace OmegaSpot.Backend.Controllers {
 
+    /// <summary>Controller that handles all User related operations</summary>
     [Route("User")] //This is the route the URL needs to go to
     [ApiController] //This indicates there's an API Controller 
     public class UsersController: Controller {
+
+        /// <summary>Context that'll handle all operations to the DB</summary>
         private readonly SpotContext _context;
 
+        /// <summary>Creates a Users controller</summary>
+        /// <param name="context"></param>
         public UsersController(SpotContext context) { _context = context; }
 
         //This region contains everything to do with Logging in, Logging out, and changing passwords
@@ -233,6 +238,7 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations of the user tied to the given session id</summary>
         /// <param name="SessionID"></param>
+        /// <param name="Status"></param>
         /// <returns></returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> UserReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
@@ -308,6 +314,10 @@ namespace OmegaSpot.Backend.Controllers {
 
         //This region handles the registering of users.
         #region Registration
+
+        /// <summary>Regtisters a user</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegistrationRequest Request) {
 

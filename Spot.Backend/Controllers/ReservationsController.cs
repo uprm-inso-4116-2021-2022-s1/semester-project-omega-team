@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OmegaSpot.Common;
 using OmegaSpot.Data;
@@ -11,27 +9,40 @@ using OmegaSpot.Backend.Requests;
 
 namespace OmegaSpot.Backend.Controllers {
 
+    /// <summary>Controller that handles all reservation operations</summary>
     [Route("Reservation")]
     [ApiController]
     public class ReservationsController : Controller {
+
+        /// <summary>Context handling all DB operations</summary>
         private readonly SpotContext _context;
 
+        /// <summary>Creates a Reservation Controller</summary>
+        /// <param name="context"></param>
         public ReservationsController(SpotContext context) { _context = context; }
 
+        /// <summary>Creates a reservation with given details from the create reservation request</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
 
             //Let's do a little validation before any of this:
-            if (Request.StartTime > Request.EndTime) { return BadRequest("Start time cannot be after end time"); }
-            if (Request.StartTime < DateTime.Now.AddSeconds(30)) { return BadRequest("Reservation cannot be in the past!"); }
-            if (Request.EndTime - Request.StartTime < new TimeSpan(0,15,0)) { return BadRequest("Reservations cannot be less than 15 minutes in length"); }
+            if (Request.StartTime > Request.EndTime) { return BadRequest("Start time cannot be after end time"); } //Check Start and end time are valid
+            if (Request.StartTime < DateTime.Now.AddSeconds(30)) { return BadRequest("Reservation cannot be in the past!"); } //Check start time is not in the past
+            if (Request.EndTime - Request.StartTime < new TimeSpan(0,15,0)) { return BadRequest("Reservations cannot be less than 15 minutes in length"); } //Check that the reservation is at least 15 minutes long
 
-            Session S = SessionManager.Manager.FindSession(Request.SessionID);
-            if (S == null) { return Unauthorized("Invalid session"); }
+            //Get the session
+            Session S = SessionManager.Manager.FindSession(Request.SessionID); 
+            if (S == null) { return Unauthorized("Invalid session"); } 
 
+            //Get the spot
             Spot Spot = await _context.Spot.Include(S=>S.Business).FirstOrDefaultAsync(S=>S.ID==Request.SpotID); 
             if (Spot == null) { return NotFound("Spot was not found"); }
 
+            //TODO: CHECK IF THE RESERVATION FALLS WITHIN THE OPEN/CLOSE TIMES
+
+            //Check if any conflict with the reservation
             bool Conflicts = await _context.Reservation.AnyAsync(R=> R.Spot.ID==Request.SpotID && (
                                                                 (R.StartTime > Request.StartTime && R.StartTime < Request.EndTime) ||
                                                                 (R.EndTime > Request.StartTime && R.EndTime < Request.EndTime)
@@ -39,6 +50,7 @@ namespace OmegaSpot.Backend.Controllers {
 
             if (Conflicts) { return BadRequest("Reservation conflicts with existing reservation for this spot"); }
 
+            //Create the reservation
             Reservation R = new() {
                 Reason = Request.Reason,
                 StartTime = Request.StartTime,
@@ -48,12 +60,16 @@ namespace OmegaSpot.Backend.Controllers {
                 Status = Spot.Business.ReservationsRequireApproval ? ReservationStatus.PENDING : ReservationStatus.APPROVED
             };
 
+            //Add and save to the db
             _context.Add(R);
             await _context.SaveChangesAsync();
 
             return Ok(R);
         }
 
+        /// <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> UpdateReservation(UpdateReservationRequest Request) {
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
@@ -148,6 +164,9 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok();
         }
 
+        /// <summary>Helper function to get the business owned by the user tied to given business</summary>
+        /// <param name="S"></param>
+        /// <returns></returns>
         private async Task<Business> GetSessionBusiness(Session S) {
             User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
             //actually we can assume a user just exists since they logged on

@@ -1,0 +1,527 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Spot.Backend</name>
+    </assembly>
+    <members>
+        <member name="T:OmegaSpot.Backend.Controllers.BusinessesController">
+            <summary>Controller that handles all business operations</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.Controllers.BusinessesController._context">
+            <summary>Connection to the Spot database and its tables</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.#ctor(OmegaSpot.Data.SpotContext)">
+            <summary>Constructor to create the controller</summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses">
+            <summary>Gets all businesses in the database</summary>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.UpdateBusiness(OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest)">
+            <summary>Updates busienss owned by user tied to session within request to have given new details</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusiness(System.Guid)">
+            <summary>Gets busines with specified ID</summary>
+            <param name="ID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessSpots(System.Guid)">
+            <summary>Gets spots that belong to specified business</summary>
+            <param name="ID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
+            <summary>Gets reservations for a user's business (if they're an owner)</summary>
+            <param name="SessionID"></param>
+            <param name="Status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservationsCount(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>Gets reservations for a user's business (if they're an owner)</summary>
+            <param name="SessionID"></param>
+            <param name="StartRange"></param>
+            <param name="EndRange"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetSpotBySpotStatistics(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>Gets a spot's Number of reservations grouped by current status</summary>
+            <param name="SessionID"></param>
+            <param name="StartRange"></param>
+            <param name="EndRange"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetSessionBusiness(OmegaSpot.Backend.Session)">
+            <summary>Helper function to get the business owned by the user tied to given business</summary>
+            <param name="S"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.Controllers.ReservationsController">
+            <summary>Controller that handles all reservation operations</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.Controllers.ReservationsController._context">
+            <summary>Context handling all DB operations</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.#ctor(OmegaSpot.Data.SpotContext)">
+            <summary>Creates a Reservation Controller</summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.CreateReservation(OmegaSpot.Backend.Requests.CreateReservationRequest)">
+            <summary>Creates a reservation with given details from the create reservation request</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.UpdateReservation(OmegaSpot.Backend.Requests.UpdateReservationRequest)">
+            <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.AdvanceAllReservations">
+            <summary>Administrative command to advance all reservations in the database</summary>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.GetSessionBusiness(OmegaSpot.Backend.Session)">
+            <summary>Helper function to get the business owned by the user tied to given business</summary>
+            <param name="S"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.Controllers.SpotsController">
+            <summary>Controller that handles all spot related operations</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.Controllers.SpotsController._context">
+            <summary>Context that'll handle all operations to the DB</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.Controllers.SpotsController.DEFAULT_IMAGE">
+            <summary>Holds the default image for plots so that we don't have to load it more than one time</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.#ctor(OmegaSpot.Data.SpotContext)">
+            <summary>Creates a Spot controller</summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Index(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>Gets a list of all spots</summary>
+            <param name="start"></param>
+            <param name="end"></param>
+            <param name="Search"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Details(System.Nullable{System.Guid})">
+            <summary>Gets a spot's details</summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GenericFeatured(System.Int32)">
+            <summary>Gets a list of the most reserved spots in the last 7 days</summary>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.UserFeatured(System.Guid,System.Int32)">
+            <summary>Gets a list of spots featured for a user of the given session</summary>
+            <param name="SessionID"></param>
+            <param name="Count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GetSpotImage(System.Guid,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>Gets a spot's image (resizing if necessary)</summary>
+            <param name="ID"></param>
+            <param name="Width"></param>
+            <param name="Height"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.CreateEdit(OmegaSpot.Backend.Requests.SpotModRequest)">
+            <summary>Handles the creation or editing of a spot based on if the request has a spot ID or not</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ImageUpload(OmegaSpot.Backend.Requests.SpotImageUpdateRequest)">
+            <summary>Handles upload and saving of an image to DB for a spot</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Delete(OmegaSpot.Backend.Requests.SpotModRequest)">
+            <summary>Delets a spot from the DB</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GetSessionBusiness(OmegaSpot.Backend.Session)">
+            <summary>Helper function to get the business owned by the user tied to given business</summary>
+            <param name="S"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ResizeImage(System.Drawing.Image,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>Function to resize a given image</summary>
+            <param name="I"></param>
+            <param name="Width"></param>
+            <param name="Height"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ImageToByteArray(System.Drawing.Image,System.Drawing.Imaging.ImageFormat)">
+            <summary>Converts an Image to a byte array of specified image format data</summary>
+            <param name="I"></param>
+            <param name="IF"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ByteArrayToImage(System.Byte[])">
+            <summary>Converts a byte array to an image object</summary>
+            <param name="B"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ConvertImageByteArray(System.Byte[],System.Drawing.Imaging.ImageFormat)">
+            <summary>Converts an Image to a byte array of specified image format data</summary>
+            <param name="B"></param>
+            <param name="IF"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.Controllers.UsersController">
+            <summary>Controller that handles all User related operations</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.Controllers.UsersController._context">
+            <summary>Context that'll handle all operations to the DB</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.#ctor(OmegaSpot.Data.SpotContext)">
+            <summary>Creates a Users controller</summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.LogIn(OmegaSpot.Backend.Requests.UserAuthRequest)">
+            <summary>Attempts to sign in a user by checking if the user exists, and if their password matches with the one given</summary>
+            <param name="U"></param>
+            <returns><see cref="F:System.Guid.Empty"/> if the username or password were not found, or a new guid if a session was registered</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.LogOut(System.Guid)">
+            <summary>Attempts to log out a user, by removing the given session from the session manager</summary>
+            <param name="SessionID"></param>
+            <returns>true if logout was successful, false if the session was not found</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.LogOutAll(System.Guid)">
+            <summary>Attempts to log out of all sessions that have the same user tied to it as the given session does</summary>
+            <param name="SessionID"></param>
+            <returns>number of sessions signed out of, or unauthorized if the session was not found</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.ChangePassword(OmegaSpot.Backend.Requests.PasswordChangeRequest)">
+            <summary>Attempts to change the password of a user with the session ID in the given password change request</summary>
+            <param name="PCR"></param>
+            <returns>True if the password change was successful. Bad request if it does not, with a given reason.</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.ChangeName(OmegaSpot.Backend.Requests.NameChangeRequest)">
+            <summary>Attempts to change the name of a user with the session ID in the given name change request</summary>
+            <param name="NCR"></param>
+            <returns>True if the name change was successful. Bad request if it does not, with a given reason.</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.GetNotifs(System.Guid)">
+            <summary>Gets all notifs from the user tied to the given session ID</summary>
+            <param name="SessionID"></param>
+            <returns>List of all notifs from the given user, or unauthorized if the given session was not found</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.ReadNotif(System.Guid,System.Guid)">
+            <summary>Marks a given notif as read if it belongs to the session ID</summary>
+            <param name="NotifID"></param>
+            <param name="SessionID"></param>
+            <returns>The given notification, or unauthorized if the session was not found, or if the notif does not belong to the sessions's tied user</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.ReadNotifAll(System.Guid)">
+            <summary>Marks all unread notifications from the session's tied user as read</summary>
+            <param name="SessionID"></param>
+            <returns>Number of notifications marked as read, or unauthorized if the session does not exist</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.ReadNotifDel(System.Guid)">
+            <summary>Delets all notifications that are read from a session's tied user.</summary>
+            <param name="SessionID"></param>
+            <returns>Number of notifications deleted</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserDetails(System.Guid)">
+            <summary>Gets details of the user tied to the given session id</summary>
+            <param name="SessionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
+            <summary>Gets reservations of the user tied to the given session id</summary>
+            <param name="SessionID"></param>
+            <param name="Status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserBusiness(System.Guid)">
+            <summary>Gets business of the user tied to the given session id if said user is a business owner</summary>
+            <param name="SessionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.Register(OmegaSpot.Backend.Requests.UserRegistrationRequest)">
+            <summary>Regtisters a user</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.Program">
+            <summary>Main entrypoint class of the backend app</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Program.Main(System.String[])">
+            <summary>Main entrypoint method of the backend app</summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Program.CreateHostBuilder(System.String[])">
+            <summary>Creates the webapp and runs it</summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OmegaSpot.Backend.Program.OnHeroku">
+            <summary>Flag to determine whether or not the program is running on Heroku or not</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Properties.Resources.DefaultSpot">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.CreateReservationRequest">
+            <summary>Request to create a reservation</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.CreateReservationRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.CreateReservationRequest.Reason">
+            <summary>Reason this reservation is being made</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.CreateReservationRequest.StartTime">
+            <summary>Time this reservation will start at</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.CreateReservationRequest.EndTime">
+            <summary>Time this reservation will end at</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.CreateReservationRequest.SpotID">
+            <summary>ID Of the spot to Reserve</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.ISpotRequest">
+            <summary>Minimum common information for a Spot request.</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.ISpotRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.NameChangeRequest">
+            <summary>Holds a request to change the name of a User</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.NameChangeRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.NameChangeRequest.NewName">
+            <summary>New name of this user</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.PasswordChangeRequest">
+            <summary>Holds a request to change the password of a user</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.PasswordChangeRequest.SessionID">
+            <summary>ID of the session this PCR comes from</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.PasswordChangeRequest.CurrentPassword">
+            <summary>User's current password</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.PasswordChangeRequest.NewPassword">
+            <summary>New Password</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.SpotImageUpdateRequest">
+            <summary>Holds a request to update a specified plot's image</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotImageUpdateRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotImageUpdateRequest.SpotID">
+            <summary>ID of the plot to update the image of</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotImageUpdateRequest.Image">
+            <summary>Spot's new image</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.SpotModRequest">
+            <summary>Request to modify, delete, or create a spot</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotModRequest.SessionID">
+            <summary>ID of the session execuitng this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotModRequest.SpotID">
+            <summary>ID of the spot to modify (Should be blank when creating)</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotModRequest.Name">
+            <summary>Name of the spot</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.SpotModRequest.Description">
+            <summary>Description of the spot</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest">
+            <summary>Request to update a business's details</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.Name">
+            <summary>Updated business name</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.OpenTime">
+            <summary>Updated business's open time</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.CloseTime">
+            <summary>Updated Business's close time</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.ReservationsRequireApproval">
+            <summary>Updated business's reservation approval requirement status</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.PhoneNumbers">
+            <summary>Updated business's phone numbers</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.Email">
+            <summary>Updated business's email</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest.Website">
+            <summary>Updated Business's website</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.UpdateReservationRequest">
+            <summary>Request to update a reservation's status</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateReservationRequest.SessionID">
+            <summary>ID of the session executing this request</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateReservationRequest.ReservationID">
+            <summary>ID of the reservation to update the status of</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UpdateReservationRequest.NewStatus">
+            <summary>New status of the reservation</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.UserAuthRequest">
+            <summary>Request to authenticate and log in a user</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserAuthRequest.Username">
+            <summary>Username of the user</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserAuthRequest.Password">
+            <summary>Password of the User</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.UserRegistrationRequest">
+            <summary>Request to handle registration of a user</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.Username">
+            <summary>username of the user to register</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.Name">
+            <summary>Real name of the user to register</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.Password">
+            <summary>User's Password Registration</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.IsOwner">
+            <summary>Whether or not the registration is for a user or a business</summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Session">
+            <summary>Holds a Spot Session</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Session.ID">
+            <summary>ID of this session</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Session.ExpirationDate">
+            <summary>Time at which this session will no longer be valid</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Session.UserID">
+            <summary>User tied to this Session</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Session.Expired">
+            <summary>Determines whether or not this session is expired</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Session.#ctor(System.String)">
+            <summary>Creates a session for the given UserID</summary>
+            <param name="UserID"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Session.ExtendSession">
+            <summary>Extends the Session expiration date to 7 days from now</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Session.Equals(System.Object)">
+            <summary>Compares this Session to another object</summary>
+            <param name="obj"></param>
+            <returns>True if and only if object is a session and the ID matches</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Session.GetHashCode">
+            <summary>Gets hashcode for this session</summary>
+            <returns><see cref="P:OmegaSpot.Backend.Session.ID"/>'s hashcode</returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.SessionManager">
+            <summary>Session Manager for Spot</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.SessionManager.SingletonSM">
+            <summary>Internal Singleton Session Manager object</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.SessionManager.Manager">
+            <summary>Gets the static, singleton session manager for Neco</summary>
+        </member>
+        <member name="F:OmegaSpot.Backend.SessionManager.Sessions">
+            <summary>Collection of all sessions in this manager</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.SessionManager.Count">
+            <summary>Amount of sessions in the collection (including those that are expired)</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.#ctor">
+            <summary>Internal constructor to create a session manager</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.LogIn(System.String)">
+            <summary>Logs specified user in to a new session.</summary>
+            <param name="UserID"></param>
+            <returns>GUID of the added session</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.FindSession(System.Guid)">
+            <summary>Returns a session with sepcified ID. 
+            If the Session is expired, it returns null, and removes the session from the collection.
+            Otherwise, it extends the session before returning it.</summary>
+            <param name="ID"></param>
+            <returns>Returns a session if one exists, if not NULL</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.ExtendSession(System.Guid)">
+            <summary>Extends a session with given UID</summary>
+            <returns>True if a session was found and it was able to be extended. False otherwise</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.LogOut(System.Guid)">
+            <summary>Removes a session with specified ID</summary>
+            <param name="ID"></param>
+            <returns>Returns true if the session was found and was removed, false otherwise</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.LogOutAll(System.String)">
+            <summary>Removes all sessions for the specified user</summary>
+            <param name="UserID"></param>
+            <returns>Number of sessions logged out of</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.SessionManager.RemoveExpiredSessions">
+            <summary>Removes all expired sessions from the collection of active sessions</summary>
+            <returns>Amount of removed sessions</returns>
+        </member>
+        <member name="T:OmegaSpot.Backend.Startup">
+            <summary>Class that ahndles startup of the backend</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>Creates a startup object</summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="P:OmegaSpot.Backend.Startup.Configuration">
+            <summary>Holds configuration of the startup</summary>
+        </member>
+        <member name="M:OmegaSpot.Backend.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:OmegaSpot.Backend.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+        </member>
+    </members>
+</doc>

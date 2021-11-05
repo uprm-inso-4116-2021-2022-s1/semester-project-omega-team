@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OmegaSpot.Backend {
 
@@ -30,7 +28,7 @@ namespace OmegaSpot.Backend {
         private SessionManager() { Sessions = new HashSet<Session>(); }
 
         /// <summary>Logs specified user in to a new session.</summary>
-        /// <param name="S"></param>
+        /// <param name="UserID"></param>
         /// <returns>GUID of the added session</returns>
         public Guid LogIn(string UserID) {
             Session S;
