@@ -87,6 +87,24 @@
             <param name="S"></param>
             <returns></returns>
         </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.DatesSame(System.DateTime,System.DateTime)">
+            <summary>Checks that the dates (months, year, and day) of two datetimes are the same (Ignores time)</summary>
+            <param name="Start"></param>
+            <param name="End"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.TimeBetween(System.DateTime,System.DateTime,System.DateTime)">
+            <summary>Checks that a given time is between the start and end time. Ignores Date</summary>
+            <param name="Start"></param>
+            <param name="End"></param>
+            <param name="Time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.MakeToday(System.DateTime)">
+            <summary>Makes a copy of the datetime with the month, year, and day of today. Preserves its time.</summary>
+            <param name="Time"></param>
+            <returns></returns>
+        </member>
         <member name="T:OmegaSpot.Backend.Controllers.SpotsController">
             <summary>Controller that handles all spot related operations</summary>
         </member>
@@ -251,6 +269,11 @@
             <param name="Request"></param>
             <returns></returns>
         </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.RegisterBusiness(OmegaSpot.Backend.Requests.BusinessRegistrationRequest)">
+            <summary>Registers a business</summary>
+            <param name="Request"></param>
+            <returns></returns>
+        </member>
         <member name="T:OmegaSpot.Backend.Program">
             <summary>Main entrypoint class of the backend app</summary>
         </member>
@@ -286,6 +309,15 @@
             <summary>
               Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
+        </member>
+        <member name="T:OmegaSpot.Backend.Requests.BusinessRegistrationRequest">
+            <summary>Request to create a business user account and its business</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.BusinessRegistrationRequest.UserRequest">
+            <summary>Details for the new user to create</summary>
+        </member>
+        <member name="P:OmegaSpot.Backend.Requests.BusinessRegistrationRequest.BusinessDetails">
+            <summary>Details for the new business to create (ID should be empty)</summary>
         </member>
         <member name="T:OmegaSpot.Backend.Requests.CreateReservationRequest">
             <summary>Request to create a reservation</summary>
@@ -418,9 +450,6 @@
         </member>
         <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.Password">
             <summary>User's Password Registration</summary>
-        </member>
-        <member name="P:OmegaSpot.Backend.Requests.UserRegistrationRequest.IsOwner">
-            <summary>Whether or not the registration is for a user or a business</summary>
         </member>
         <member name="T:OmegaSpot.Backend.Session">
             <summary>Holds a Spot Session</summary>

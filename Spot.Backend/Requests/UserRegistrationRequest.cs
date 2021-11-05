@@ -11,8 +11,5 @@
         /// <summary>User's Password Registration</summary>
         public string Password { get; set; }
 
-        /// <summary>Whether or not the registration is for a user or a business</summary>
-        public bool IsOwner { get; set; }
-
     }
 }
