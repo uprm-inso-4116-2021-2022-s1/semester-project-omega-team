@@ -33,6 +33,13 @@ namespace OmegaSpot.Common {
         /// <summary>Time at which this business closes (Date ignored)</summary>
         public DateTime CloseTime { get; set; } = new DateTime(2020,1,1,23,59,59);
 
+        /// <summary>Checks if the business is open 24 hours or not. This is defined by the opentime being exactly midnight, and the close time being 11:59:59 PM</summary>
+        public bool Is24Hours { get {
+                return OpenTime.Hour == 0 && OpenTime.Minute == 0 && OpenTime.Second == 0 &&
+                    CloseTime.Hour == 23 && CloseTime.Minute == 59 && CloseTime.Second == 59;
+            } 
+        }
+
         /// <summary>Flag to determine if reservations made to this business require reservations or not</summary>
         public bool ReservationsRequireApproval { get; set; } = false;
 
