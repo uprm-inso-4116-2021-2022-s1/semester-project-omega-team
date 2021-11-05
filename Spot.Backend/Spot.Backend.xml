@@ -16,47 +16,47 @@
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses">
             <summary>Gets all businesses in the database</summary>
-            <returns></returns>
+            <returns>Returns a list of all businesses in the DB</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.UpdateBusiness(OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest)">
             <summary>Updates busienss owned by user tied to session within request to have given new details</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>A copy of the business that was updated</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusiness(System.Guid)">
             <summary>Gets busines with specified ID</summary>
             <param name="ID"></param>
-            <returns></returns>
+            <returns>Business with specified ID</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessSpots(System.Guid)">
             <summary>Gets spots that belong to specified business</summary>
             <param name="ID"></param>
-            <returns></returns>
+            <returns>A list of spots from the given business</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
             <summary>Gets reservations for a user's business (if they're an owner)</summary>
             <param name="SessionID"></param>
             <param name="Status"></param>
-            <returns></returns>
+            <returns>Reservations of matching reservation status (or all statuses if none is specified) of the given session's tied user's business.</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservationsCount(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>Gets reservations for a user's business (if they're an owner)</summary>
             <param name="SessionID"></param>
             <param name="StartRange"></param>
             <param name="EndRange"></param>
-            <returns></returns>
+            <returns>Count of reservations grouped by status for given session's tied user's business</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetSpotBySpotStatistics(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>Gets a spot's Number of reservations grouped by current status</summary>
             <param name="SessionID"></param>
             <param name="StartRange"></param>
             <param name="EndRange"></param>
-            <returns></returns>
+            <returns>Spot by spot reservation counts of spots owned by given session's tied user's business</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetSessionBusiness(OmegaSpot.Backend.Session)">
             <summary>Helper function to get the business owned by the user tied to given business</summary>
             <param name="S"></param>
-            <returns></returns>
+            <returns>Business owned by session's tied user</returns>
         </member>
         <member name="T:OmegaSpot.Backend.Controllers.ReservationsController">
             <summary>Controller that handles all reservation operations</summary>
@@ -71,16 +71,16 @@
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.CreateReservation(OmegaSpot.Backend.Requests.CreateReservationRequest)">
             <summary>Creates a reservation with given details from the create reservation request</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>Reservation object representing created reservation</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.UpdateReservation(OmegaSpot.Backend.Requests.UpdateReservationRequest)">
             <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>Updated reservation object</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.AdvanceAllReservations">
             <summary>Administrative command to advance all reservations in the database</summary>
-            <returns></returns>
+            <returns>Nothing</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.GetSessionBusiness(OmegaSpot.Backend.Session)">
             <summary>Helper function to get the business owned by the user tied to given business</summary>
@@ -123,45 +123,45 @@
             <param name="start"></param>
             <param name="end"></param>
             <param name="Search"></param>
-            <returns></returns>
+            <returns>A list of all spots within given parameters</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Details(System.Nullable{System.Guid})">
             <summary>Gets a spot's details</summary>
             <param name="id"></param>
-            <returns></returns>
+            <returns>Spot object holding all details from the given spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GenericFeatured(System.Int32)">
             <summary>Gets a list of the most reserved spots in the last 7 days</summary>
             <param name="count"></param>
-            <returns></returns>
+            <returns>List of the most reserved spots in the last 7 days (already sorted in descending order)</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.UserFeatured(System.Guid,System.Int32)">
             <summary>Gets a list of spots featured for a user of the given session</summary>
             <param name="SessionID"></param>
             <param name="Count"></param>
-            <returns></returns>
+            <returns>A list of the given session's tied user's most reserved spots</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GetSpotImage(System.Guid,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>Gets a spot's image (resizing if necessary)</summary>
             <param name="ID"></param>
             <param name="Width"></param>
             <param name="Height"></param>
-            <returns></returns>
+            <returns>Image of the given spot, resized if needed</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.CreateEdit(OmegaSpot.Backend.Requests.SpotModRequest)">
             <summary>Handles the creation or editing of a spot based on if the request has a spot ID or not</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>Spot that's been created or updated</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ImageUpload(OmegaSpot.Backend.Requests.SpotImageUpdateRequest)">
             <summary>Handles upload and saving of an image to DB for a spot</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>Updated spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Delete(OmegaSpot.Backend.Requests.SpotModRequest)">
             <summary>Delets a spot from the DB</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>The deleted spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GetSessionBusiness(OmegaSpot.Backend.Session)">
             <summary>Helper function to get the business owned by the user tied to given business</summary>
@@ -251,28 +251,28 @@
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserDetails(System.Guid)">
             <summary>Gets details of the user tied to the given session id</summary>
             <param name="SessionID"></param>
-            <returns></returns>
+            <returns>User object for given session's tied user</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
             <summary>Gets reservations of the user tied to the given session id</summary>
             <param name="SessionID"></param>
             <param name="Status"></param>
-            <returns></returns>
+            <returns>List of reservations from the given session's tied user</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserBusiness(System.Guid)">
             <summary>Gets business of the user tied to the given session id if said user is a business owner</summary>
             <param name="SessionID"></param>
-            <returns></returns>
+            <returns>Business of the session's tied user</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.Register(OmegaSpot.Backend.Requests.UserRegistrationRequest)">
             <summary>Regtisters a user</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>User of the registered user</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.RegisterBusiness(OmegaSpot.Backend.Requests.BusinessRegistrationRequest)">
             <summary>Registers a business</summary>
             <param name="Request"></param>
-            <returns></returns>
+            <returns>Object with registered user and registered business</returns>
         </member>
         <member name="T:OmegaSpot.Backend.Program">
             <summary>Main entrypoint class of the backend app</summary>
