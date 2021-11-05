@@ -339,6 +339,38 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(U);
         }
 
+        /// <summary>Registers a business</summary>
+        /// <param name="Request"></param>
+        /// <returns></returns>
+        [HttpPost("RegisterBusiness")]
+        public async Task<IActionResult> RegisterBusiness(BusinessRegistrationRequest Request) {
+            //Register the user
+            IActionResult R1 = await Register(Request.UserRequest);
+            //Get the OK object result
+            if (R1 is not OkObjectResult R1OK) { return R1; } //If we don't have an OK object result then return whatever we got.
+
+            //Get the value as user
+            if (R1OK.Value is not User U) { return R1; } //if we don't have a user then UHOH SPAGHETIOS just return what we've got
+
+            U.IsOwner = true;
+            Business B = new() {
+                CloseTime = Request.BusinessDetails.CloseTime,
+                Email = Request.BusinessDetails.Email,
+                Name = Request.BusinessDetails.Name,
+                OpenTime=Request.BusinessDetails.OpenTime,
+                Owner=U,
+                PhoneNumbers=Request.BusinessDetails.PhoneNumbers,
+                ReservationsRequireApproval=Request.BusinessDetails.ReservationsRequireApproval,
+                Website =Request.BusinessDetails.Website
+            };
+
+            _context.Update(U);
+            _context.Add(B);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { User = U, Business = B});
+        } 
+
         #endregion
     }
 }
