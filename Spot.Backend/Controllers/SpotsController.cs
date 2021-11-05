@@ -32,9 +32,9 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a list of all spots</summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="Search"></param>
+        /// <param name="start">Index of the starting spot</param>
+        /// <param name="end">Index of the ending spot</param>
+        /// <param name="Search">Search query to search by Spot Name, Description, and Business Name</param>
         /// <returns>A list of all spots within given parameters</returns>
         // GET: SPOT
         [HttpGet]
@@ -67,7 +67,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a spot's details</summary>
-        /// <param name="id"></param>
+        /// <param name="id">ID of a spot</param>
         /// <returns>Spot object holding all details from the given spot</returns>
         // GET: SPOT/5
         [HttpGet("{id}")]
@@ -82,7 +82,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a list of the most reserved spots in the last 7 days</summary>
-        /// <param name="count"></param>
+        /// <param name="count">Amount of featured spots to retrieved</param>
         /// <returns>List of the most reserved spots in the last 7 days (already sorted in descending order)</returns>
         //GET: SPOT/Featured
         [HttpGet("Featured")]
@@ -92,8 +92,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a list of spots featured for a user of the given session</summary>
-        /// <param name="SessionID"></param>
-        /// <param name="Count"></param>
+        /// <param name="SessionID">ID of a Session</param>
+        /// <param name="Count">Amount of featured spots to be retrieved</param>
         /// <returns>A list of the given session's tied user's most reserved spots</returns>
         //Post: SPOT/Featured
         [HttpPost("Featured")]
@@ -114,9 +114,9 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a spot's image (resizing if necessary)</summary>
-        /// <param name="ID"></param>
-        /// <param name="Width"></param>
-        /// <param name="Height"></param>
+        /// <param name="ID">ID of a spot</param>
+        /// <param name="Width">Width of the image to retrieve</param>
+        /// <param name="Height">Height of the image to retrieve</param>
         /// <returns>Image of the given spot, resized if needed</returns>
         [HttpGet("Images/{id}.jpg")]
         public async Task<IActionResult> GetSpotImage(Guid ID, int? Width, int? Height) {
@@ -141,7 +141,7 @@ namespace OmegaSpot.Backend.Controllers {
 
 
         /// <summary>Handles the creation or editing of a spot based on if the request has a spot ID or not</summary>
-        /// <param name="Request"></param>
+        /// <param name="Request">Request to modify a spot</param>
         /// <returns>Spot that's been created or updated</returns>
         // POST: SPOT
         [HttpPost]
@@ -183,7 +183,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Handles upload and saving of an image to DB for a spot</summary>
-        /// <param name="Request"></param>
+        /// <param name="Request">Request to update a spot's image</param>
         /// <returns>Updated spot</returns>
         // POST: SPOT/Image
         [HttpPost("Image")]
@@ -211,7 +211,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Delets a spot from the DB</summary>
-        /// <param name="Request"></param>
+        /// <param name="Request">Request to delete a spot (Only really needs Session and Spot IDs)</param>
         /// <returns>The deleted spot</returns>
         //POST: SPOT
         [HttpDelete]

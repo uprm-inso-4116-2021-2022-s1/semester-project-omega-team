@@ -22,7 +22,7 @@ namespace OmegaSpot.Backend.Controllers {
         public ReservationsController(SpotContext context) { _context = context; }
 
         /// <summary>Creates a reservation with given details from the create reservation request</summary>
-        /// <param name="Request"></param>
+        /// <param name="Request">Request to create a reservation with all relevant details</param>
         /// <returns>Reservation object representing created reservation</returns>
         [HttpPost]
         public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
@@ -81,7 +81,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
-        /// <param name="Request"></param>
+        /// <param name="Request">Request to update a reservation's status</param>
         /// <returns>Updated reservation object</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateReservation(UpdateReservationRequest Request) {
