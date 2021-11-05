@@ -63,7 +63,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpGet("{ID}")] //Here we specify that ID is a part of the URL. So for instance, if we want to get business 1, we'd go to URL /Business/1
-        public async Task<IActionResult> GetBusiness(Guid ID) {
+        public async Task<IActionResult> GetBusiness([FromBody] Guid ID) {
 
             //Let's get the business with the given ID. We could use FindAsync(), but since I want to include who owns this business,
             //We need to use FirstOrDefaultAsync(), to add an Include()
@@ -83,7 +83,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpGet("{ID}/Spots")]
-        public async Task<IActionResult> GetBusinessSpots(Guid ID) {
+        public async Task<IActionResult> GetBusinessSpots([FromBody] Guid ID) {
 
             //This *Should* really be an INCLUDE rather than a separate method, but it is not possible. We need to have spots show what business they belong to.
             //When we ask to Include spots, from here, it will create a circular loop, making it impossible for the JSON Serializer to serialize the business.
