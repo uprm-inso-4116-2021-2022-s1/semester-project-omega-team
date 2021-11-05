@@ -36,7 +36,9 @@
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
             <summary>Gets reservations for a user's business (if they're an owner)</summary>
             <param name="SessionID">ID of the business owner's session</param>
-            <param name="Status">Status of the reservations you wish to retrieve</param>
+            <param name="Status">Status of the reservations you wish to retrieve.
+            Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.
+            </param>
             <returns>Reservations of matching reservation status (or all statuses if none is specified) of the given session's tied user's business.</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinessReservationsCount(System.Guid,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
@@ -75,7 +77,9 @@
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.UpdateReservation(OmegaSpot.Backend.Requests.UpdateReservationRequest)">
             <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
-            <param name="Request">Request to update a reservation's status</param>
+            <param name="Request">Request to update a reservation's status. Stauts must be one of the following:
+            Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.        
+            </param>
             <returns>Updated reservation object</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.AdvanceAllReservations">
@@ -256,7 +260,8 @@
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserReservations(System.Guid,System.Nullable{OmegaSpot.Common.ReservationStatus})">
             <summary>Gets reservations of the user tied to the given session id</summary>
             <param name="SessionID">A Session ID</param>
-            <param name="Status">Status of the reservations to retrieve</param>
+            <param name="Status">Status of the reservations to retrieve
+            Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.        /// </param>
             <returns>List of reservations from the given session's tied user</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.UserBusiness(System.Guid)">

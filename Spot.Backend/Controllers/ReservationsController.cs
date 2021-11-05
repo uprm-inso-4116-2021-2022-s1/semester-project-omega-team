@@ -81,7 +81,9 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Updates a reservation's state (checking that the transition is allowed based on current state and executing party)</summary>
-        /// <param name="Request">Request to update a reservation's status</param>
+        /// <param name="Request">Request to update a reservation's status. Stauts must be one of the following:
+        /// Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.        
+        /// </param>
         /// <returns>Updated reservation object</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateReservation(UpdateReservationRequest Request) {

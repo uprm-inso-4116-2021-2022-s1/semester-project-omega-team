@@ -238,7 +238,8 @@ namespace OmegaSpot.Backend.Controllers {
 
         /// <summary>Gets reservations of the user tied to the given session id</summary>
         /// <param name="SessionID">A Session ID</param>
-        /// <param name="Status">Status of the reservations to retrieve</param>
+        /// <param name="Status">Status of the reservations to retrieve
+        /// Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.        /// </param>
         /// <returns>List of reservations from the given session's tied user</returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> UserReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
