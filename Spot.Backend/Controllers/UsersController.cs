@@ -322,7 +322,7 @@ namespace OmegaSpot.Backend.Controllers {
         public async Task<IActionResult> Register(UserRegistrationRequest Request) {
 
             //See if we have a user with the given name
-            if (await _context.User.AnyAsync(U => U.Username == Request.Username))
+            if (await _context.User.AnyAsync(U => U.Username.ToUpper() == Request.Username.ToUpper()))
                     return BadRequest("User with given username already exists!"); //no no no
 
             //OK then now register
