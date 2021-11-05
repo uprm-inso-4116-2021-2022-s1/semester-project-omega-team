@@ -51,7 +51,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <returns>true if logout was successful, false if the session was not found</returns>
         //POST: Auth/Out
         [HttpPost("Auth/Out")]
-        public async Task<IActionResult> LogOut(Guid SessionID) {
+        public async Task<IActionResult> LogOut([FromBody] Guid SessionID) {
             bool Result = await Task.Run(()=> SessionManager.Manager.LogOut(SessionID));
             return Ok(Result);
         }
@@ -61,7 +61,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <returns>number of sessions signed out of, or unauthorized if the session was not found</returns>
         //POST: Auth/Out
         [HttpPost("Auth/OutAll")]
-        public async Task<IActionResult> LogOutAll(Guid SessionID) {
+        public async Task<IActionResult> LogOutAll([FromBody] Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
