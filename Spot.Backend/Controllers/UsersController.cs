@@ -135,7 +135,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns>List of all notifs from the given user, or unauthorized if the given session was not found</returns>
         [HttpPost("Notif")]
-        public async Task<IActionResult> GetNotifs(Guid SessionID) {
+        public async Task<IActionResult> GetNotifs([FromBody]Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
@@ -178,7 +178,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <returns>Number of notifications marked as read, or unauthorized if the session does not exist</returns>
         //POST Notif/All
         [HttpPost("Notif/all")]
-        public async Task<IActionResult> ReadNotifAll(Guid SessionID) {
+        public async Task<IActionResult> ReadNotifAll([FromBody]Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
@@ -201,7 +201,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <returns>Number of notifications deleted</returns>
         //DELTE Notif
         [HttpDelete("Notif")]
-        public async Task<IActionResult> ReadNotifDel(Guid SessionID) {
+        public async Task<IActionResult> ReadNotifDel([FromBody]Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
@@ -225,7 +225,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> UserDetails(Guid SessionID) {
+        public async Task<IActionResult> UserDetails([FromBody]Guid SessionID) {
 
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
@@ -294,7 +294,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="SessionID"></param>
         /// <returns></returns>
         [HttpPost("Business")]
-        public async Task<IActionResult> UserBusiness(Guid SessionID) {
+        public async Task<IActionResult> UserBusiness([FromBody]Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
             if (S == null) { return Unauthorized("Invalid session"); }
 
