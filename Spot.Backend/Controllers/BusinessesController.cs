@@ -23,7 +23,7 @@ namespace OmegaSpot.Backend.Controllers {
         public BusinessesController(SpotContext context) { _context = context; }
 
         /// <summary>Gets all businesses in the database</summary>
-        /// <returns></returns>
+        /// <returns>Returns a list of all businesses in the DB</returns>
         [HttpGet("")] //This indicates the URL route to this method in this controler. Heere we leave it blank, so executing a GET on /Business will execute this method.
         public async Task<IActionResult> GetBusinesses() {
 
@@ -35,8 +35,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
         
         /// <summary>Updates busienss owned by user tied to session within request to have given new details</summary>
-        /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <param name="Request">Request to update business requests (with all details)</param>
+        /// <returns>A copy of the business that was updated</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateBusiness(UpdateBusinessDetailsRequest Request) {
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
@@ -60,10 +60,10 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets busines with specified ID</summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
+        /// <param name="ID">ID of a Business</param>
+        /// <returns>Business with specified ID</returns>
         [HttpGet("{ID}")] //Here we specify that ID is a part of the URL. So for instance, if we want to get business 1, we'd go to URL /Business/1
-        public async Task<IActionResult> GetBusiness([FromBody] Guid ID) {
+        public async Task<IActionResult> GetBusiness(Guid ID) {
 
             //Let's get the business with the given ID. We could use FindAsync(), but since I want to include who owns this business,
             //We need to use FirstOrDefaultAsync(), to add an Include()
@@ -80,10 +80,10 @@ namespace OmegaSpot.Backend.Controllers {
         //We can also specify to get arguments from the HTTP Body on POST/Put requests, or from a query string (Though make sure to include a default value!)
 
         /// <summary>Gets spots that belong to specified business</summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
+        /// <param name="ID">ID of a Business</param>
+        /// <returns>A list of spots from the given business</returns>
         [HttpGet("{ID}/Spots")]
-        public async Task<IActionResult> GetBusinessSpots([FromBody] Guid ID) {
+        public async Task<IActionResult> GetBusinessSpots(Guid ID) {
 
             //This *Should* really be an INCLUDE rather than a separate method, but it is not possible. We need to have spots show what business they belong to.
             //When we ask to Include spots, from here, it will create a circular loop, making it impossible for the JSON Serializer to serialize the business.
@@ -101,9 +101,11 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
-        /// <param name="SessionID"></param>
-        /// <param name="Status"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">ID of the business owner's session</param>
+        /// <param name="Status">Status of the reservations you wish to retrieve.
+        /// Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.
+        /// </param>
+        /// <returns>Reservations of matching reservation status (or all statuses if none is specified) of the given session's tied user's business.</returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> GetBusinessReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
 
@@ -159,10 +161,10 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets reservations for a user's business (if they're an owner)</summary>
-        /// <param name="SessionID"></param>
-        /// <param name="StartRange"></param>
-        /// <param name="EndRange"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">ID of the business owner's session</param>
+        /// <param name="StartRange">Start date range of the reservations to lookup</param>
+        /// <param name="EndRange">End date range of the reservatiosn to lookup</param>
+        /// <returns>Count of reservations grouped by status for given session's tied user's business</returns>
         [HttpPost("ReservationsCount")]
         public async Task<IActionResult> GetBusinessReservationsCount([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
             Session S = SessionManager.Manager.FindSession(SessionID);
@@ -188,10 +190,10 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets a spot's Number of reservations grouped by current status</summary>
-        /// <param name="SessionID"></param>
-        /// <param name="StartRange"></param>
-        /// <param name="EndRange"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">ID of the business owner's session</param>
+        /// <param name="StartRange">Start date range of the reservations to lookup</param>
+        /// <param name="EndRange">End date range of the reservations to lookup</param>
+        /// <returns>Spot by spot reservation counts of spots owned by given session's tied user's business</returns>
         [HttpPost("SpotStatistics")]
         public async Task<IActionResult> GetSpotBySpotStatistics([FromBody] Guid SessionID, [FromQuery] DateTime? StartRange, [FromQuery] DateTime? EndRange) {
             Session S = SessionManager.Manager.FindSession(SessionID);
@@ -251,8 +253,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Helper function to get the business owned by the user tied to given business</summary>
-        /// <param name="S"></param>
-        /// <returns></returns>
+        /// <param name="S">Business owner's session ID</param>
+        /// <returns>Business owned by session's tied user</returns>
         private async Task<Business> GetSessionBusiness(Session S) {
             User U = await _context.User.FirstOrDefaultAsync(U => U.Username == S.UserID);
             //actually we can assume a user just exists since they logged on

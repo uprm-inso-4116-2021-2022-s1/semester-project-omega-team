@@ -26,7 +26,7 @@ namespace OmegaSpot.Backend.Controllers {
         #region Auth
 
         /// <summary>Attempts to sign in a user by checking if the user exists, and if their password matches with the one given</summary>
-        /// <param name="U"></param>
+        /// <param name="U">Authorization details for a User</param>
         /// <returns><see cref="Guid.Empty"/> if the username or password were not found, or a new guid if a session was registered</returns>
         // POST: Auth
         [HttpPost("Auth")]
@@ -47,7 +47,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Attempts to log out a user, by removing the given session from the session manager</summary>
-        /// <param name="SessionID"></param>
+        /// <param name="SessionID">A session ID</param>
         /// <returns>true if logout was successful, false if the session was not found</returns>
         //POST: Auth/Out
         [HttpPost("Auth/Out")]
@@ -57,7 +57,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Attempts to log out of all sessions that have the same user tied to it as the given session does</summary>
-        /// <param name="SessionID"></param>
+        /// <param name="SessionID">A Session ID</param>
         /// <returns>number of sessions signed out of, or unauthorized if the session was not found</returns>
         //POST: Auth/Out
         [HttpPost("Auth/OutAll")]
@@ -71,7 +71,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Attempts to change the password of a user with the session ID in the given password change request</summary>
-        /// <param name="PCR"></param>
+        /// <param name="PCR">A Password Change Request</param>
         /// <returns>True if the password change was successful. Bad request if it does not, with a given reason.</returns>
         // PUT: Auth
         [HttpPut("Auth")]
@@ -102,7 +102,7 @@ namespace OmegaSpot.Backend.Controllers {
         //Hey maybe if someone could find a better anme for this I'd appreciate it
 
         /// <summary>Attempts to change the name of a user with the session ID in the given name change request</summary>
-        /// <param name="NCR"></param>
+        /// <param name="NCR">A Name Change Request</param>
         /// <returns>True if the name change was successful. Bad request if it does not, with a given reason.</returns>
         // POST: ChangeName
         [HttpPost("ChangeName")]
@@ -132,7 +132,7 @@ namespace OmegaSpot.Backend.Controllers {
         #region Manage Notifications
 
         /// <summary>Gets all notifs from the user tied to the given session ID</summary>
-        /// <param name="SessionID"></param>
+        /// <param name="SessionID">A Session ID</param>
         /// <returns>List of all notifs from the given user, or unauthorized if the given session was not found</returns>
         [HttpPost("Notif")]
         public async Task<IActionResult> GetNotifs(Guid SessionID) {
@@ -150,8 +150,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Marks a given notif as read if it belongs to the session ID</summary>
-        /// <param name="NotifID"></param>
-        /// <param name="SessionID"></param>
+        /// <param name="NotifID">ID of a Notification</param>
+        /// <param name="SessionID">ID of a Session</param>
         /// <returns>The given notification, or unauthorized if the session was not found, or if the notif does not belong to the sessions's tied user</returns>
         //POST Notif/5
         [HttpPost("Notif/{NotifID}")]
@@ -174,7 +174,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Marks all unread notifications from the session's tied user as read</summary>
-        /// <param name="SessionID"></param>
+        /// <param name="SessionID">A Session ID</param>
         /// <returns>Number of notifications marked as read, or unauthorized if the session does not exist</returns>
         //POST Notif/All
         [HttpPost("Notif/all")]
@@ -197,7 +197,7 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Delets all notifications that are read from a session's tied user.</summary>
-        /// <param name="SessionID"></param>
+        /// <param name="SessionID">A Session ID</param>
         /// <returns>Number of notifications deleted</returns>
         //DELTE Notif
         [HttpDelete("Notif")]
@@ -222,8 +222,8 @@ namespace OmegaSpot.Backend.Controllers {
         #region User Details
 
         /// <summary>Gets details of the user tied to the given session id</summary>
-        /// <param name="SessionID"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">A Session ID</param>
+        /// <returns>User object for given session's tied user</returns>
         [HttpPost]
         public async Task<IActionResult> UserDetails(Guid SessionID) {
 
@@ -237,9 +237,10 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets reservations of the user tied to the given session id</summary>
-        /// <param name="SessionID"></param>
-        /// <param name="Status"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">A Session ID</param>
+        /// <param name="Status">Status of the reservations to retrieve
+        /// Values range from 0-6 for PENDING, DENIED, APPROVED, MISSED, IN_PROGRESS, COMPLETED, and CANCELLED.        /// </param>
+        /// <returns>List of reservations from the given session's tied user</returns>
         [HttpPost("Reservations")]
         public async Task<IActionResult> UserReservations([FromBody] Guid SessionID, [FromQuery] ReservationStatus? Status) {
 
@@ -291,8 +292,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Gets business of the user tied to the given session id if said user is a business owner</summary>
-        /// <param name="SessionID"></param>
-        /// <returns></returns>
+        /// <param name="SessionID">A Session ID</param>
+        /// <returns>Business of the session's tied user</returns>
         [HttpPost("Business")]
         public async Task<IActionResult> UserBusiness(Guid SessionID) {
             Session S = SessionManager.Manager.FindSession(SessionID);
@@ -316,8 +317,8 @@ namespace OmegaSpot.Backend.Controllers {
         #region Registration
 
         /// <summary>Regtisters a user</summary>
-        /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <param name="Request">Request to register a request</param>
+        /// <returns>User of the registered user</returns>
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegistrationRequest Request) {
 
@@ -340,8 +341,8 @@ namespace OmegaSpot.Backend.Controllers {
         }
 
         /// <summary>Registers a business</summary>
-        /// <param name="Request"></param>
-        /// <returns></returns>
+        /// <param name="Request">A bundle of two requests to register a user and a business (with given details)</param>
+        /// <returns>Object with registered user and registered business</returns>
         [HttpPost("RegisterBusiness")]
         public async Task<IActionResult> RegisterBusiness(BusinessRegistrationRequest Request) {
             //Register the user
