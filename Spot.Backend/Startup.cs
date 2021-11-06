@@ -31,6 +31,15 @@ namespace OmegaSpot.Backend {
             services.AddControllers();
             services.AddDbContext<SpotContext>();
 
+            // Set the comments path for the Swagger JSON and UI.
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (Program.OnHeroku) { //If we're on Heroku:
+                //override to contain the previously built version because Heroku's buildpack doesn't generate the xml file
+                xmlPath = Path.Combine(AppContext.BaseDirectory,"..","Spot.Backend", xmlFile);
+            }
+
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1",
                     new OpenApiInfo {
@@ -43,9 +52,6 @@ namespace OmegaSpot.Backend {
                             Url = new("https://github.com/igtampe")
                         }
                     });
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
         }
