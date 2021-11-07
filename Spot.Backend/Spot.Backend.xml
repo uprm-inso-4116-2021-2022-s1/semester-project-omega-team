@@ -274,6 +274,11 @@
             <param name="Request">Request to register a request</param>
             <returns>User of the registered user</returns>
         </member>
+        <member name="M:OmegaSpot.Backend.Controllers.UsersController.CheckUserExists(System.String)">
+            <summary>Checks if a Username already exists</summary>
+            <param name="Username">Username string</param>
+            <returns>Whether or not the username exists</returns>
+        </member>
         <member name="M:OmegaSpot.Backend.Controllers.UsersController.RegisterBusiness(OmegaSpot.Backend.Requests.BusinessRegistrationRequest)">
             <summary>Registers a business</summary>
             <param name="Request">A bundle of two requests to register a user and a business (with given details)</param>

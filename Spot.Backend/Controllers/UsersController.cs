@@ -323,7 +323,7 @@ namespace OmegaSpot.Backend.Controllers {
         public async Task<IActionResult> Register(UserRegistrationRequest Request) {
 
             //See if we have a user with the given name
-            if (await _context.User.AnyAsync(U => U.Username.ToUpper() == Request.Username.ToUpper()))
+            if ((await CheckUserExists(Request.Username) as OkObjectResult)?.Value as bool? != false) //look at this mess. We check for != false because "bool?" can have 3 values. True, False, or Null
                     return BadRequest("User with given username already exists!"); //no no no
 
             //OK then now register
@@ -338,6 +338,15 @@ namespace OmegaSpot.Backend.Controllers {
             await _context.SaveChangesAsync();
 
             return Ok(U);
+        }
+
+        /// <summary>Checks if a Username already exists</summary>
+        /// <param name="Username">Username string</param>
+        /// <returns>Whether or not the username exists</returns>
+        [HttpPost("CheckUser")]
+        public async Task<IActionResult> CheckUserExists([FromBody]string Username) {
+            //See if we have a user with the given name
+            return Ok(await _context.User.AnyAsync(U => U.Username.ToUpper() == Username.ToUpper()));
         }
 
         /// <summary>Registers a business</summary>
