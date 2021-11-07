@@ -13,6 +13,9 @@ namespace OmegaSpot.Backend {
     /// <summary>Class that ahndles startup of the backend</summary>
     public class Startup {
 
+        /// <summary>Allow SpecificOrigins for CORS</summary>
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         /// <summary>Creates a startup object</summary>
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration) {
@@ -30,6 +33,15 @@ namespace OmegaSpot.Backend {
 
             services.AddControllers();
             services.AddDbContext<SpotContext>();
+
+            services.AddCors(options => {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                    builder => {
+                        builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                        builder.AllowAnyOrigin();
+                    });
+            });
 
             // Set the comments path for the Swagger JSON and UI.
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -62,6 +74,9 @@ namespace OmegaSpot.Backend {
         /// </summary>
         /// <param name="app"></param>
         public void Configure(IApplicationBuilder app) {
+
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Spot.Backend v1"));

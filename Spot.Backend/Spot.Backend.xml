@@ -543,6 +543,9 @@
         <member name="T:OmegaSpot.Backend.Startup">
             <summary>Class that ahndles startup of the backend</summary>
         </member>
+        <member name="F:OmegaSpot.Backend.Startup.MyAllowSpecificOrigins">
+            <summary>Allow SpecificOrigins for CORS</summary>
+        </member>
         <member name="M:OmegaSpot.Backend.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>Creates a startup object</summary>
             <param name="configuration"></param>
