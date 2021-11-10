@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OmegaSpot.Common;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Data.Common;
 
 namespace OmegaSpot.Data {
     public class SpotContext: DbContext {
@@ -23,12 +25,12 @@ namespace OmegaSpot.Data {
         private readonly string SQLServerURL;
 
         /// <summary>Underlying one for the prop <see cref="SqlConnection"/></summary>
-        private SqlConnection SCON;
+        private DbConnection SCON;
 
         /// <summary>Underlying SQL connection for raw SQL queries</summary>
-        private SqlConnection SqlConnection {
+        private DbConnection SqlConnection {
             get {
-                if (SCON == null) { SCON = Database.GetDbConnection() as SqlConnection; SCON.Open(); }
+                if (SCON == null) { SCON = Database.GetDbConnection(); SCON.Open(); }
                 return SCON;
             }
         }
@@ -156,10 +158,12 @@ namespace OmegaSpot.Data {
         /// <returns></returns>
         public async Task<List<Spot>> MostReservedSpots(int Count, DateTime? Cutoff = null) {
             DateTime RealCutOff = Cutoff ?? DateTime.MinValue;
-
-            using SqlCommand C = new(); 
+            
+            using DbCommand C = Database.GetDbConnection().CreateCommand();
             C.CommandText = SqlStringTopSpotsCutoff();
-            C.Parameters.Add("@Cutoff", System.Data.SqlDbType.DateTime2);
+            C.Parameters.Add(PostgresMode ? 
+                new NpgsqlParameter("@Cutoff", NpgsqlTypes.NpgsqlDbType.Timestamp) : 
+                new SqlParameter("@Cutoff",System.Data.SqlDbType.DateTime2));
             C.Parameters["@Cutoff"].Value = RealCutOff;
             C.Connection = SqlConnection;
 
@@ -174,10 +178,12 @@ namespace OmegaSpot.Data {
         /// <param name="Filler">Whether or not to fill the list with filler spots if there aren't enough spots to reach the count</param>
         /// <returns></returns>
         public async Task<List<Spot>> MostReservedSpotsUser(int Count, string Username, bool Filler) {
-          
-            using SqlCommand C = new();
+
+            using DbCommand C = Database.GetDbConnection().CreateCommand();
             C.CommandText = SqlStringTopSpotsUser();
-            C.Parameters.Add("@Username", System.Data.SqlDbType.VarChar);
+            C.Parameters.Add(PostgresMode ?
+                new NpgsqlParameter("@Username", NpgsqlTypes.NpgsqlDbType.Varchar) :
+                new SqlParameter("@Username", System.Data.SqlDbType.VarChar));
             C.Parameters["@Username"].Value = Username;
             C.Connection = SqlConnection;
 
@@ -201,10 +207,10 @@ namespace OmegaSpot.Data {
 
         //why did I sign up for this recommendation system
 
-        private static async Task<List<Spot>> TopSpotCommandToListSpot(SqlCommand Command, int Count) {
+        private static async Task<List<Spot>> TopSpotCommandToListSpot(DbCommand Command, int Count) {
             List<Spot> Spots = new();
 
-            SqlDataReader Reader = await Command.ExecuteReaderAsync();
+            DbDataReader Reader = await Command.ExecuteReaderAsync();
 
             while (await Reader.ReadAsync()) {
                 Spot S = new();
