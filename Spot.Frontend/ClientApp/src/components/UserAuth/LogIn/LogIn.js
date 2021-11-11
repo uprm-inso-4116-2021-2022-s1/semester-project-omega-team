@@ -8,11 +8,12 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { useHistory } from "react-router-dom";
-import { Switch } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { string } from 'prop-types';
+import { Switch} from '@mui/material';
+import { dark } from '@mui/material/styles/createPalette';
+
+
 
 
 
@@ -31,7 +32,7 @@ function Copyright(props) {
   
 const theme = createTheme();
 
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+const MaterialUISwitch = styled(Switch)(({theme}) => ({
   width: 62,
   height: 34,
   padding: 7,
@@ -169,7 +170,10 @@ export default function LogIn() {
               </Box>
             </Box>
             <Copyright sx={{ mt: 8, mb: 4 }} />
-            <MaterialUISwitch/>
+            <MaterialUISwitch onClick={() => {
+              ThemeProvider.theme.palette.mode = 'dark';
+            }}
+            />
           </Container>
         </ThemeProvider>
       );
