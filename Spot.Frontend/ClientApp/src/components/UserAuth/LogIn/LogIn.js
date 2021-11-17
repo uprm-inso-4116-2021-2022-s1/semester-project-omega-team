@@ -69,14 +69,13 @@ export default function LogIn() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            // background: 'linear-gradient(to right top, #ecececc7, #fafafa6e)',
             borderRadius: "30px",
             backdropFilter: "blur(2rem)",
             padding: "30px",
           }}
         >
           <image href="https://media.discordapp.net/attachments/335464035921428480/895052586284093501/SpotThumb.png" />
-          <Typography component="h1" variant="h3" fontFamily="Lucida Sans">
+          <Typography component="h1" variant="h3" fontFamily="Trebuchet MS">
             Spot
           </Typography>
           <Box
@@ -95,7 +94,6 @@ export default function LogIn() {
               name="email"
               autoComplete="email"
               autoFocus
-              // color="secondary"
             />
             <TextField
               margin="normal"
@@ -107,10 +105,9 @@ export default function LogIn() {
               id="password"
               variant="standard"
               autoComplete="current-password"
-              // color="secondary"
             />
             <FormControlLabel
-              control={<Switch value="" /*color="secondary"*/ />}
+              control={<Switch value="" />}
               label="Remember me"
             />
             <Button
@@ -118,7 +115,6 @@ export default function LogIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, borderRadius: "50px" }}
-              // color="secondary"
               size="large"
               onClick={() => {
                 history.push("/mainpage");
@@ -128,12 +124,12 @@ export default function LogIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2" /*color="secondary"*/>
+                <Link href="#" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/SignUp" variant="body2" /*color="secondary"*/>
+                <Link href="/SignUp" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

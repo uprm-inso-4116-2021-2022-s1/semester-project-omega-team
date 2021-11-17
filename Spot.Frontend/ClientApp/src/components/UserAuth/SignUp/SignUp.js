@@ -71,7 +71,7 @@ export default function SignUp() {
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h3" fontFamily="Lucida Sans">
+          <Typography component="h1" variant="h3" fontFamily="Trebuchet MS">
             Spot
           </Typography>
           <Box
