@@ -23,12 +23,21 @@ namespace OmegaSpot.Backend.Controllers {
         public BusinessesController(SpotContext context) { _context = context; }
 
         /// <summary>Gets all businesses in the database</summary>
+        /// <param name="query">Search query for businesses. Searches the name of the business only</param>
         /// <returns>Returns a list of all businesses in the DB</returns>
         [HttpGet("")] //This indicates the URL route to this method in this controler. Heere we leave it blank, so executing a GET on /Business will execute this method.
-        public async Task<IActionResult> GetBusinesses() {
+        public async Task<IActionResult> GetBusinesses(string query = "") {
+
+            List<Business> Bs;
 
             //Let's get a list of all businesses
-            List<Business> Bs = await _context.Business.ToListAsync(); //We ask the context to get us a list of all businesses asynchronously.
+            if (string.IsNullOrWhiteSpace(query)) {
+                Bs = await _context.Business.ToListAsync(); //We ask the context to get us a list of all businesses asynchronously.
+            } else {
+                query = query.ToLower();
+                //We have a query
+                Bs = await _context.Business.Where(B => B.Name.ToLower().Contains(query)).ToListAsync();
+            }
 
             //Now we return it with status OK to let the front-end know its OK
             return Ok(Bs);
