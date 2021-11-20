@@ -134,6 +134,12 @@
             <param name="id">ID of a spot</param>
             <returns>Spot object holding all details from the given spot</returns>
         </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Schedule(System.Nullable{System.Guid},System.Nullable{System.DateTime})">
+            <summary>Gets a spot's Schedule</summary>
+            <param name="id">ID of a spot</param>
+            <param name="Date">Day of the schedule you want (If empty, returns schedule for today)</param>
+            <returns>List of reservations with limited details for this spot</returns>
+        </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GenericFeatured(System.Int32)">
             <summary>Gets a list of the most reserved spots in the last 7 days</summary>
             <param name="count">Amount of featured spots to retrieved</param>
