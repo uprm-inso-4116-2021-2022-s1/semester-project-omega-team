@@ -14,8 +14,9 @@
             <summary>Constructor to create the controller</summary>
             <param name="context"></param>
         </member>
-        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses">
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses(System.String)">
             <summary>Gets all businesses in the database</summary>
+            <param name="query">Search query for businesses. Searches the name of the business only</param>
             <returns>Returns a list of all businesses in the DB</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.UpdateBusiness(OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest)">
