@@ -9,16 +9,20 @@ import { Button, CardActionArea, CardActions } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import axios from "axios";
 import Cookies from "js-cookie";
+import Reserve from './Reserve';
 
 export default function Spots() {
 
     useEffect(() => {
         retrieveSpots();
-    })
+    }, [])
 
     const backendAPI = "https://omegaspotapi.herokuapp.com/";
     const [featuredSpots, setFeaturedSpots] = useState([]);
     const [spots, setSpots] = useState([]);
+    const [openReserve, setOpenReserve] = useState(false);
+    const [spotName, setSpotName] = useState("");
+    const [spotID, setSpotID] = useState("");
 
     const retrieveSpots = async () => {
         await axios({
@@ -65,7 +69,11 @@ export default function Spots() {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small">Reserve</Button>
+                                    <Button size="small" onClick={() => {
+                                        setSpotID(card.id)
+                                        setSpotName(card.name)
+                                        setOpenReserve(true);
+                                    }}>Reserve</Button>
                                     <Button size="small">Details</Button>
                                 </CardActions>
                             </Box>
@@ -95,7 +103,11 @@ export default function Spots() {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <Button size="small">Reserve</Button>
+                                <Button size="small" onClick={() => {
+                                    setSpotID(card.id)
+                                    setSpotName(card.name)
+                                    setOpenReserve(true);
+                                }}>Reserve</Button>
                                 <Button size="small">Details</Button>
                             </CardActions>
                         </Card>
@@ -130,7 +142,11 @@ export default function Spots() {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small">Reserve</Button>
+                                    <Button size="small" onClick={() => {
+                                        setSpotID(card.id)
+                                        setSpotName(card.name)
+                                        setOpenReserve(true);
+                                    }}>Reserve</Button>
                                     <Button size="small">Details</Button>
                                 </CardActions>
                             </Box>
@@ -160,14 +176,18 @@ export default function Spots() {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <Button size="small">Reserve</Button>
+                                <Button size="small" onClick={() => {
+                                    setSpotID(card.id)
+                                    setSpotName(card.name)
+                                    setOpenReserve(true);
+                                }}>Reserve</Button>
                                 <Button size="small">Details</Button>
                             </CardActions>
                         </Card>
                     </Grid>
                 ))}
             </Grid>
-
+            <Reserve spotID={spotID} spotName={spotName} openReserve={openReserve} setOpenReserve={setOpenReserve} />
         </div>
     )
 }
