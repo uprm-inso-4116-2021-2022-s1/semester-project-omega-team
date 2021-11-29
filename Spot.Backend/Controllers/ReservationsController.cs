@@ -73,8 +73,16 @@ namespace OmegaSpot.Backend.Controllers {
                 Status = Spot.Business.ReservationsRequireApproval ? ReservationStatus.PENDING : ReservationStatus.APPROVED
             };
 
+            //Send a notification to the business owner
+            Notification N = new() {
+                Text = @$"User {R.User.Name} has created a reservation for spot {R.Spot.Name} from {R.StartTime:M, hh:mm:ss tt} to {R.EndTime:M, hh:mm:ss tt}
+                        {(Spot.Business.ReservationsRequireApproval ? " and it requires your approval" : "")}.",
+                User = R.User
+            };
+
             //Add and save to the db
             _context.Add(R);
+            _context.Add(N);
             await _context.SaveChangesAsync();
 
             return Ok(R);
@@ -94,10 +102,11 @@ namespace OmegaSpot.Backend.Controllers {
 
             //ok now load the reservation
             Reservation R = await _context.Reservation
-                .Include(R => R.Spot).ThenInclude(S => S.Business)
+                .Include(R => R.Spot).ThenInclude(S => S.Business).ThenInclude(B => B.Owner)
                 .Include(R => R.User)
                 .FirstOrDefaultAsync(R => R.ID == Request.ReservationID);
             if (R == null) { return NotFound("Reservation was not found"); }
+            Notification N = new();
 
             R.AdvanceReservation();
 
@@ -111,6 +120,13 @@ namespace OmegaSpot.Backend.Controllers {
                     //Ensure the reservation is currently pending
                     if (R.Status != ReservationStatus.PENDING) { return BadRequest("Reservation is not currently pending"); }
 
+                    //We need to send a notification to the reserver
+                    N.Text = @$"Your reservation for {R.Spot.Name} in {R.Spot.Business.Name} has been {(Request.NewStatus == ReservationStatus.APPROVED 
+                        ? "Approved! Make sure to show up approximately 5 minutes before the reservation, and to check in at most 15 minutes after your reservation begins."
+                        : "Denied. We're sorry for any inconveniences this may cause.")
+                        }";
+                    N.User = R.User;
+
                     break;
                 case ReservationStatus.IN_PROGRESS:
                     //Ensure the user is the owner of the reservation
@@ -122,6 +138,8 @@ namespace OmegaSpot.Backend.Controllers {
                     //Ensure it is a valid time to check in
                     if (DateTime.Now > R.StartTime.AddMinutes(-5)) { return BadRequest("It is too early to check in"); }
 
+                    //We *could* send a notif to the owner that someone's checked in but that might be a stretch. Let's not for now
+
                     break;
                 case ReservationStatus.COMPLETED:
                     //Ensure the user is the owner of the reservation
@@ -130,15 +148,25 @@ namespace OmegaSpot.Backend.Controllers {
                     //Ensure the reservation is currently IN_PROGRESS
                     if (R.Status != ReservationStatus.IN_PROGRESS) { return BadRequest("Reservation is not currently In Progress"); }
 
+                    //We could also send a notif to the owner that someone's checked out but also that might be a stretch so let's also not
+
                     break;
                 case ReservationStatus.CANCELLED:
                     if (B != null && B.ID != R.Spot.Business.ID) {
                         //The appropriate business user is attempting to make the change
                         if (R.Status == ReservationStatus.PENDING) { return BadRequest("Pending reservations cannot be canceled by the business owner. Consider DENIED instead"); }
                         if (R.Status != ReservationStatus.APPROVED) { return BadRequest("Reservation is not in a state that can be canceled"); }
+
+                        //Reservation was canceled by the business owner, so we must notify the reserver
+                        N.Text = $"We're sorry, but your reservation has been cancelled by the business owner. This may be due to unforseen circumstances. Please contact the business owner for more information";
+                        N.User = R.User;
+
                     } else if (S.UserID == R.User.Username) {
                         //The request is coming from the user
                         if (R.Status != ReservationStatus.APPROVED && R.Status != ReservationStatus.PENDING) { return BadRequest("Reservation is not in a state that can be canceled"); }
+
+                        N.Text = $"{R.User.Name} has canceled their reservation for spot {R.Spot.Name}.";
+
                     } else {
                         return Unauthorized("Session is not business owner or reservation owner");
                     }
@@ -152,6 +180,7 @@ namespace OmegaSpot.Backend.Controllers {
 
             //Save the reservation
             _context.Update(R);
+            _context.Add(N);
             await _context.SaveChangesAsync();
 
             //Return the reservation
