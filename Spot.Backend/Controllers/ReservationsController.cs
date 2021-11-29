@@ -21,7 +21,7 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="context"></param>
         public ReservationsController(SpotContext context) { _context = context; }
 
-        /// <summary>Checks a Create Reservation Request</summary>
+        /// <summary>Checks a Create Reservation Request. Returns OK if the reservation is a valid reservation. Within the body, returns if the reservation has a conflict</summary>
         /// <param name="Request">Request to check</param>
         /// <returns></returns>
         [HttpPost("Check")]
@@ -56,7 +56,7 @@ namespace OmegaSpot.Backend.Controllers {
                                                                 (R.EndTime > Request.StartTime && R.EndTime < Request.EndTime)
                                                             ));
 
-            return Conflicts ? BadRequest("Reservation conflicts with existing reservation for this spot") : Ok("Reservation is valid");
+            return Ok(Conflicts);
         }
 
         /// <summary>Creates a reservation with given details from the create reservation request</summary>
@@ -68,6 +68,7 @@ namespace OmegaSpot.Backend.Controllers {
             //Check the reservation
             IActionResult VerificationResult = await Check(Request);
             if (VerificationResult is not OkObjectResult) { return VerificationResult; }
+            if (((VerificationResult as OkObjectResult).Value as bool?)==true) { return BadRequest("A conflict was found"); }
 
             //Get the session
             Session S = SessionManager.Manager.FindSession(Request.SessionID);
