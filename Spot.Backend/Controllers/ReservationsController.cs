@@ -254,7 +254,7 @@ namespace OmegaSpot.Backend.Controllers {
             TodayStart = MakeToday(Start);
             TodayEnd = MakeToday(End);
             TodayTime = MakeToday(Time);
-            return TodayStart < TodayTime && TodayTime < TodayEnd;
+            return TodayStart <= TodayTime && TodayTime <= TodayEnd;
 
         }
 
