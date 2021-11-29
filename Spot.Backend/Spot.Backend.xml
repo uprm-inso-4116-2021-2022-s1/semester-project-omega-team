@@ -72,7 +72,7 @@
             <param name="context"></param>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.ReservationsController.Check(OmegaSpot.Backend.Requests.CreateReservationRequest)">
-            <summary>Checks a Create Reservation Request</summary>
+            <summary>Checks a Create Reservation Request. Returns OK if the reservation is a valid reservation. Within the body, returns if the reservation has a conflict</summary>
             <param name="Request">Request to check</param>
             <returns></returns>
         </member>
