@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -7,23 +7,45 @@ import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import { Button, CardActionArea, CardActions } from '@mui/material';
 import Divider from '@mui/material/Divider';
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Spots() {
 
-    const recentCards = [1, 2, 3];
-    const featuredCards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    useEffect(() => {
+        retrieveSpots();
+    })
+
+    const backendAPI = "https://omegaspotapi.herokuapp.com/";
+    const [featuredSpots, setFeaturedSpots] = useState([]);
+    const [spots, setSpots] = useState([]);
+
+    const retrieveSpots = async () => {
+        await axios({
+            method: 'GET',
+            url: backendAPI + 'Spot'
+        }).then((res) => {
+            setSpots(res.data);
+        })
+        await axios({
+            method: 'GET',
+            url: backendAPI + 'Spot/Featured'
+        }).then((res) => {
+            setFeaturedSpots(res.data);
+        })
+    }
 
     return (
         <div>
             <Divider sx={{ p: 5 }}>
                 <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Recent Spots
+                    Featured Spots
                 </Typography>
             </Divider>
             {/* desktop card */}
             {/* <Typography variant="h2" sx={{ p: 1 }}>Recent</Typography> */}
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
-                {recentCards.map((card) => (
+                {featuredSpots.map((card) => (
                     <Grid item key={card}>
                         <Card sx={{ display: 'flex' }}>
                             <CardMedia
@@ -43,8 +65,8 @@ export default function Spots() {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small">Action 1</Button>
-                                    <Button size="small">Action 2</Button>
+                                    <Button size="small">Reserve</Button>
+                                    <Button size="small">Details</Button>
                                 </CardActions>
                             </Box>
                         </Card>
@@ -53,7 +75,7 @@ export default function Spots() {
             </Grid>
             {/* mobile card */}
             <Grid container spacing={4} sx={{ display: { sm: 'block', md: 'none' } }}>
-                {recentCards.map((card) => (
+                {featuredSpots.map((card) => (
                     <Grid item key={card}>
                         <Card>
                             <CardActionArea>
@@ -65,18 +87,16 @@ export default function Spots() {
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        Recent Spot {card}
+                                        {card.name}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                                        enim praesent elementum facilisis leo vel.
+                                        {card.description}
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <Button size="small">Action 1</Button>
-                                <Button size="small">Action 2</Button>
+                                <Button size="small">Reserve</Button>
+                                <Button size="small">Details</Button>
                             </CardActions>
                         </Card>
                     </Grid>
@@ -85,12 +105,12 @@ export default function Spots() {
             {/* desktop card */}
             <Divider sx={{ p: 5 }}>
                 <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Featured Spots
+                    Spots
                 </Typography>
             </Divider>
             {/* <Typography variant="h2" sx={{ p: 1 }}>Featured</Typography> */}
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
-                {featuredCards.map((card) => (
+                {spots.map((card) => (
                     <Grid item key={card}>
                         <Card sx={{ display: 'flex' }}>
                             <CardMedia
@@ -103,15 +123,15 @@ export default function Spots() {
                             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <CardContent>
                                     <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
-                                        Featured Spot {card}
+                                        {card.name}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla efficitur libero ut urna sagittis, a convallis massa facilisis. Vestibulum sit amet commodo neque, a tristique lectus. Vivamus et elit mi. Fusce dictum molestie elit sit amet accumsan. Nunc ultricies est tellus, quis laoreet turpis maximus vel. Mauris sodales malesuada erat, vel finibus risus suscipit sit amet. Morbi ornare turpis in nisi imperdiet, ac mattis massa varius. Nulla posuere porta diam, laoreet feugiat lorem condimentum id.
+                                        {card.description}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small">Action 1</Button>
-                                    <Button size="small">Action 2</Button>
+                                    <Button size="small">Reserve</Button>
+                                    <Button size="small">Details</Button>
                                 </CardActions>
                             </Box>
                         </Card>
@@ -120,7 +140,7 @@ export default function Spots() {
             </Grid>
             {/* mobile card */}
             <Grid container spacing={4} sx={{ display: { sm: 'block', md: 'none' } }}>
-                {featuredCards.map((card) => (
+                {spots.map((card) => (
                     <Grid item key={card}>
                         <Card>
                             <CardActionArea>
@@ -132,18 +152,16 @@ export default function Spots() {
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        Featured Spot {card}
+                                        {card.name}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                                        enim praesent elementum facilisis leo vel.
+                                        {card.description}
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <Button size="small">Action 1</Button>
-                                <Button size="small">Action 2</Button>
+                                <Button size="small">Reserve</Button>
+                                <Button size="small">Details</Button>
                             </CardActions>
                         </Card>
                     </Grid>

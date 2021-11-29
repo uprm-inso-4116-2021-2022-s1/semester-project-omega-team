@@ -45,8 +45,8 @@ export default function ManageReservations() {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <Button size="small">Action 1</Button>
-                                <Button size="small">Action 2</Button>
+                                <Button size="small">Details</Button>
+                                <Button size="small">Cancel</Button>
                             </CardActions>
                         </Card>
                     </Grid>
