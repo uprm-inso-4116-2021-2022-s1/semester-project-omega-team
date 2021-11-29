@@ -14,8 +14,9 @@
             <summary>Constructor to create the controller</summary>
             <param name="context"></param>
         </member>
-        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses">
+        <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.GetBusinesses(System.String)">
             <summary>Gets all businesses in the database</summary>
+            <param name="query">Search query for businesses. Searches the name of the business only</param>
             <returns>Returns a list of all businesses in the DB</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.BusinessesController.UpdateBusiness(OmegaSpot.Backend.Requests.UpdateBusinessDetailsRequest)">
@@ -133,6 +134,12 @@
             <summary>Gets a spot's details</summary>
             <param name="id">ID of a spot</param>
             <returns>Spot object holding all details from the given spot</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Schedule(System.Nullable{System.Guid},System.Nullable{System.DateTime})">
+            <summary>Gets a spot's Schedule</summary>
+            <param name="id">ID of a spot</param>
+            <param name="Date">Day of the schedule you want (If empty, returns schedule for today)</param>
+            <returns>List of reservations with limited details for this spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GenericFeatured(System.Int32)">
             <summary>Gets a list of the most reserved spots in the last 7 days</summary>

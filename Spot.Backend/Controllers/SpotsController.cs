@@ -81,6 +81,29 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(asset);   
         }
 
+        /// <summary>Gets a spot's Schedule</summary>
+        /// <param name="id">ID of a spot</param>
+        /// <param name="Date">Day of the schedule you want (If empty, returns schedule for today)</param>
+        /// <returns>List of reservations with limited details for this spot</returns>
+        // GET: SPOT/5/Schedule
+        [HttpGet("{id}/Schedule")]
+        public async Task<IActionResult> Schedule(Guid? id, DateTime? Date = null) {
+            if (id == null) { return NotFound(); }
+            DateTime RealDate = Date ?? DateTime.Now;
+
+            List<Reservation> Rs = await _context.Reservation.Where(
+                R => R.Spot.ID == id && 
+                R.StartTime.Day == RealDate.Day &&
+                    R.Status != ReservationStatus.MISSED &&
+                    R.Status != ReservationStatus.DENIED &&
+                    R.Status != ReservationStatus.CANCELLED
+                ).ToListAsync();
+
+            Rs.ForEach(R => R.Reason = "");
+
+            return Ok(Rs);
+        }
+
         /// <summary>Gets a list of the most reserved spots in the last 7 days</summary>
         /// <param name="count">Amount of featured spots to retrieved</param>
         /// <returns>List of the most reserved spots in the last 7 days (already sorted in descending order)</returns>
