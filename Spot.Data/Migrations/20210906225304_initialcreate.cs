@@ -11,8 +11,8 @@ namespace OmegaSpot.Data.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "varchar(450)", nullable: false),
+                    Password = table.Column<string>(type: "varchar", nullable: true),
                     IsOwner = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -24,11 +24,11 @@ namespace OmegaSpot.Data.Migrations
                 name: "Business",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OwnerUsername = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    OpenTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CloseTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "varchar", nullable: true),
+                    OwnerUsername = table.Column<string>(type: "varchar(450)", nullable: true),
+                    OpenTime = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    CloseTime = table.Column<DateTime>(type: "timestamp", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,11 +45,11 @@ namespace OmegaSpot.Data.Migrations
                 name: "Spot",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BusinessID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "varchar", nullable: true),
+                    Description = table.Column<string>(type: "varchar", nullable: true),
+                    BusinessID = table.Column<Guid>(type: "uuid", nullable: true),
+                    Image = table.Column<byte[]>(type: "bytea", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,11 +66,11 @@ namespace OmegaSpot.Data.Migrations
                 name: "Reservation",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    End = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SpotID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    Start = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    End = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    SpotID = table.Column<Guid>(type: "uuid", nullable: true),
+                    Username = table.Column<string>(type: "varchar(450)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

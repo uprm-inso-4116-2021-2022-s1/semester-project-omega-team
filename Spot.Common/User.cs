@@ -11,24 +11,24 @@ namespace OmegaSpot.Common {
 
         /// <summary>ID of this User</summary>
         [Key]
-        public string Username { get; set; }
+        public string Username { get; set; } = "";
 
         /// <summary>Password of this user</summary>
         [JsonIgnore] //Make sure the Password never gets serialized!!
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
 
         /// <summary>The name of this user</summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         /// <summary>Whether or not this user is an owner or not</summary>
-        public bool IsOwner { get; set; }
+        public bool IsOwner { get; set; } = false;
 
         /// <summary>
         /// Reservations this user has. 
         /// Ignored when seralizing as a JSON to avoid a circular loop.
         /// </summary>
         [JsonIgnore]
-        public List<Reservation> Reservations { get; set; }
+        public List<Reservation>? Reservations { get; set; }
 
         #endregion
 

@@ -9,19 +9,19 @@ namespace OmegaSpot.Data.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Email",
                 table: "Business",
-                type: "nvarchar(max)",
+                type: "varchar",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "PhoneNumbers",
                 table: "Business",
-                type: "nvarchar(max)",
+                type: "varchar",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Website",
                 table: "Business",
-                type: "nvarchar(max)",
+                type: "varchar",
                 nullable: true);
         }
 
