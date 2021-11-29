@@ -21,23 +21,18 @@ namespace OmegaSpot.Backend.Controllers {
         /// <param name="context"></param>
         public ReservationsController(SpotContext context) { _context = context; }
 
-        /// <summary>Creates a reservation with given details from the create reservation request</summary>
-        /// <param name="Request">Request to create a reservation with all relevant details</param>
-        /// <returns>Reservation object representing created reservation</returns>
-        [HttpPost]
-        public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
-
+        /// <summary>Checks a Create Reservation Request</summary>
+        /// <param name="Request">Request to check</param>
+        /// <returns></returns>
+        [HttpPost("Check")]
+        public async Task<IActionResult> Check(CreateReservationRequest Request) {
             //Let's do a little validation before any of this:
             if (Request.StartTime > Request.EndTime) { return BadRequest("Start time cannot be after end time"); } //Check Start and end time are valid
             if (Request.StartTime < DateTime.Now.AddSeconds(30)) { return BadRequest("Reservation cannot be in the past!"); } //Check start time is not in the past
-            if (Request.EndTime - Request.StartTime < new TimeSpan(0,15,0)) { return BadRequest("Reservations cannot be less than 15 minutes in length"); } //Check that the reservation is at least 15 minutes long
-
-            //Get the session
-            Session S = SessionManager.Manager.FindSession(Request.SessionID); 
-            if (S == null) { return Unauthorized("Invalid session"); } 
+            if (Request.EndTime - Request.StartTime < new TimeSpan(0, 15, 0)) { return BadRequest("Reservations cannot be less than 15 minutes in length"); } //Check that the reservation is at least 15 minutes long
 
             //Get the spot
-            Spot Spot = await _context.Spot.Include(S=>S.Business).FirstOrDefaultAsync(S=>S.ID==Request.SpotID); 
+            Spot Spot = await _context.Spot.Include(S => S.Business).FirstOrDefaultAsync(S => S.ID == Request.SpotID);
             if (Spot == null) { return NotFound("Spot was not found"); }
 
             //If the spot is not open all the time
@@ -56,12 +51,31 @@ namespace OmegaSpot.Backend.Controllers {
 
 
             //Check if any conflict with the reservation
-            bool Conflicts = await _context.Reservation.AnyAsync(R=> R.Spot.ID==Request.SpotID && (
+            bool Conflicts = await _context.Reservation.AnyAsync(R => R.Spot.ID == Request.SpotID && (
                                                                 (R.StartTime > Request.StartTime && R.StartTime < Request.EndTime) ||
                                                                 (R.EndTime > Request.StartTime && R.EndTime < Request.EndTime)
                                                             ));
 
-            if (Conflicts) { return BadRequest("Reservation conflicts with existing reservation for this spot"); }
+            return Conflicts ? BadRequest("Reservation conflicts with existing reservation for this spot") : Ok("Reservation is valid");
+        }
+
+        /// <summary>Creates a reservation with given details from the create reservation request</summary>
+        /// <param name="Request">Request to create a reservation with all relevant details</param>
+        /// <returns>Reservation object representing created reservation</returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateReservation(CreateReservationRequest Request) {
+
+            //Check the reservation
+            IActionResult VerificationResult = await Check(Request);
+            if (VerificationResult is not OkObjectResult) { return VerificationResult; }
+
+            //Get the session
+            Session S = SessionManager.Manager.FindSession(Request.SessionID);
+            if (S == null) { return Unauthorized("Invalid session"); }
+
+            //Get the spot
+            Spot Spot = await _context.Spot.Include(S => S.Business).FirstOrDefaultAsync(S => S.ID == Request.SpotID);
+            if (Spot == null) { return NotFound("Spot was not found"); }
 
             //Create the reservation
             Reservation R = new() {
