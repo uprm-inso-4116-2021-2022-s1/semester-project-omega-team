@@ -141,9 +141,17 @@
             <returns>Spot object holding all details from the given spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.Schedule(System.Nullable{System.Guid},System.Nullable{System.DateTime})">
-            <summary>Gets a spot's Schedule</summary>
+            <summary>Gets a spot's Schedule for specific day</summary>
             <param name="id">ID of a spot</param>
             <param name="Date">Day of the schedule you want (If empty, returns schedule for today)</param>
+            <returns>List of reservations with limited details for this spot</returns>
+        </member>
+        <member name="M:OmegaSpot.Backend.Controllers.SpotsController.ScheduleFuture(System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>Gets a spot's Schedule for all days past given date with the given start and end indexes. IE: With a start of 0, and end of 20, it will return the first 20 reservations (sorted by ascending starttime)</summary>
+            <param name="id">ID of a spot</param>
+            <param name="Date">Day of the schedule you want (If empty, puts now)</param>
+            <param name="Start">Index of first reservation in the schedule to return</param>
+            <param name="End">Index of the last reservation in the schedule to return</param>
             <returns>List of reservations with limited details for this spot</returns>
         </member>
         <member name="M:OmegaSpot.Backend.Controllers.SpotsController.GenericFeatured(System.Int32)">
