@@ -2,55 +2,169 @@ import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
 import CardMedia from '@mui/material/CardMedia';
+import Modal from "@mui/material/Modal";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import Grid from '@mui/material/Grid';
-import { Button, CardActionArea, CardActions } from '@mui/material';
+import { Button, CardActionArea } from '@mui/material';
 import Divider from '@mui/material/Divider';
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import moment from "moment";
 import axios from "axios";
 import Cookies from "js-cookie";
-import Reserve from './Reserve';
+
+const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    // minWidth: 275,
+    // minHeight: 800,
+    bgcolor: "background.paper",
+    // border: '2px solid #000',
+    boxShadow: 24,
+    p: 4
+};
 
 export default function Spots() {
 
     useEffect(() => {
-        retrieveSpots();
+        getSpots();
     }, [])
 
     const backendAPI = "https://omegaspotapi.herokuapp.com/";
     const [featuredSpots, setFeaturedSpots] = useState([]);
     const [spots, setSpots] = useState([]);
     const [openReserve, setOpenReserve] = useState(false);
+    const [spotDetails, setSpotDetails] = useState();
     const [spotName, setSpotName] = useState("");
     const [spotID, setSpotID] = useState("");
+    const [sessionID, setSessionID] = useState(Cookies.get('sessionID'));
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [dates, setDates] = useState([]);
+    const [dialogMessage, setDialogMessage] = useState("Would you like to submit the following reservation?")
+    const [errorDialog, setErrorDialog] = useState(false);
+    const [tempDates, setTempDates] = useState([]);
+    const [tempStart, setTempStart] = useState(new Date());
+    const [tempEnd, setTempEnd] = useState(new Date());
+    const localizer = momentLocalizer(moment);
 
-    const retrieveSpots = async () => {
+    const getSpots = async () => {
         await axios({
             method: 'GET',
             url: backendAPI + 'Spot'
         }).then((res) => {
+            console.log('received spots', res.data);
             setSpots(res.data);
         })
         await axios({
             method: 'GET',
             url: backendAPI + 'Spot/Featured'
         }).then((res) => {
+            console.log('received featured spots', res.data);
             setFeaturedSpots(res.data);
         })
     }
 
-    return (
+    const getSpotDetails = async (spotID) => {
+        console.log('retrieving spot details for spot:', spotID);
+        await axios({
+            method: 'GET',
+            url: backendAPI + 'Spot/' + spotID,
+            // headers: { 'Content-Type': 'application/json' },
+        }).then((res) => {
+            console.log('received the following spot name for spot:', spotID, res.data);
+            setSpotDetails(res.data);
+        })
+    }
+
+    const getReservations = async (spotID) => {
+        console.log('retrieving reservations')
+        let tempList = []
+        await axios({
+            method: 'GET',
+            url: backendAPI + 'Spot/' + spotID + '/Schedule'
+        }).then((res) => {
+            res.data.forEach((item, i) => {
+                tempList.push({
+                    allDay: false,
+                    start: new Date(item.startTime),
+                    end: new Date(item.endTime)
+                })
+            })
+            console.log(tempList);
+            setDates(tempList);
+        }).catch((error) => {
+            console.log('get spot schedule error', error);
+        })
+    }
+
+    const createReservation = async (spotID) => {
+        await axios({
+            method: 'POST',
+            url: backendAPI + 'Reservation/Check',
+            // headers: { 'Content-Type': 'application/json' },
+            data: {
+                sessionID: sessionID,
+                reason: "Creating a reservation for user: " + sessionID + " at the spot: " + spotID,
+                startTime: tempStart,
+                endTime: tempEnd,
+                spotID: spotID
+            },
+        }).then((res) => {
+            if (!res.data) {
+                console.log('reservation valid!');
+                setDialogMessage("Would you like to submit the following reservation?");
+                setErrorDialog(false);
+                axios({
+                    method: 'POST',
+                    url: backendAPI + 'Reservation',
+                    headers: { 'Content-Type': 'application/json' },
+                    data: {
+                        sessionID: sessionID,
+                        reason: "Creating a reservation for user: " + sessionID + " at the spot: " + spotID,
+                        startTime: tempStart,
+                        endTime: tempEnd,
+                        spotID: spotID
+                    }
+                }).then((res) => {
+                    console.log('reservation submitted!', res.data)
+                    getReservations(spotID)
+                    setDialogOpen(false);
+                }).catch((error) => {
+                    console.log('oops! something went wrong...', error);
+                })
+            }
+        }).catch((error) => {
+            console.log({
+                sessionID: sessionID,
+                reason: "Creating a reservation for user: " + sessionID + " at the spot: " + spotID,
+                startTime: tempStart,
+                endTime: tempEnd,
+                spotID: spotID
+            })
+            console.log('reservation invalid!', error);
+            setDialogMessage("Sorry, this reservation is invalid!")
+            setErrorDialog(true);
+        })
+    }
+
+
+    const desktopFeatured = (
         <div>
-            <Divider sx={{ p: 5 }}>
-                <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Featured Spots
-                </Typography>
-            </Divider>
             {/* desktop card */}
-            {/* <Typography variant="h2" sx={{ p: 1 }}>Recent</Typography> */}
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
-                {featuredSpots.map((card) => (
-                    <Grid item key={card}>
+                {featuredSpots.map((card, i) => (
+                    <Grid item key={i}>
                         <Card sx={{ display: 'flex' }}>
                             <CardMedia
                                 component="img"
@@ -62,10 +176,13 @@ export default function Spots() {
                             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        Recent Spot {card}
+                                        {card.name}
+                                    </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla efficitur libero ut urna sagittis, a convallis massa facilisis. Vestibulum sit amet commodo neque, a tristique lectus. Vivamus et elit mi. Fusce dictum molestie elit sit amet accumsan. Nunc ultricies est tellus, quis laoreet turpis maximus vel. Mauris sodales malesuada erat, vel finibus risus suscipit sit amet. Morbi ornare turpis in nisi imperdiet, ac mattis massa varius. Nulla posuere porta diam, laoreet feugiat lorem condimentum id.
+                                        {card.description}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
@@ -81,10 +198,15 @@ export default function Spots() {
                     </Grid>
                 ))}
             </Grid>
+        </div>
+    );
+
+    const mobileFeatured = (
+        <div>
             {/* mobile card */}
             <Grid container spacing={4} sx={{ display: { sm: 'block', md: 'none' } }}>
-                {featuredSpots.map((card) => (
-                    <Grid item key={card}>
+                {featuredSpots.map((card, i) => (
+                    <Grid item key={i}>
                         <Card>
                             <CardActionArea>
                                 <CardMedia
@@ -96,6 +218,9 @@ export default function Spots() {
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
                                         {card.name}
+                                    </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {card.description}
@@ -114,16 +239,14 @@ export default function Spots() {
                     </Grid>
                 ))}
             </Grid>
-            {/* desktop card */}
-            <Divider sx={{ p: 5 }}>
-                <Typography component="h2" variant="h4" color="gray" gutterBottom>
-                    Spots
-                </Typography>
-            </Divider>
-            {/* <Typography variant="h2" sx={{ p: 1 }}>Featured</Typography> */}
+        </div>
+    );
+
+    const desktopSpots = (
+        <div>
             <Grid container spacing={4} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
-                {spots.map((card) => (
-                    <Grid item key={card}>
+                {spots.map((card, i) => (
+                    <Grid item key={i}>
                         <Card sx={{ display: 'flex' }}>
                             <CardMedia
                                 component="img"
@@ -137,6 +260,9 @@ export default function Spots() {
                                     <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
@@ -145,8 +271,11 @@ export default function Spots() {
                                     <Button size="small" onClick={() => {
                                         setSpotID(card.id)
                                         setSpotName(card.name)
+                                        getReservations(card.id);
                                         setOpenReserve(true);
-                                    }}>Reserve</Button>
+                                    }}>
+                                        Reserve
+                                    </Button>
                                     <Button size="small">Details</Button>
                                 </CardActions>
                             </Box>
@@ -154,10 +283,15 @@ export default function Spots() {
                     </Grid>
                 ))}
             </Grid>
+        </div>
+    );
+
+    const mobileSpots = (
+        <div>
             {/* mobile card */}
             <Grid container spacing={4} sx={{ display: { sm: 'block', md: 'none' } }}>
-                {spots.map((card) => (
-                    <Grid item key={card}>
+                {spots.map((card, i) => (
+                    <Grid item key={i}>
                         <Card>
                             <CardActionArea>
                                 <CardMedia
@@ -170,6 +304,9 @@ export default function Spots() {
                                     <Typography gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
@@ -177,8 +314,8 @@ export default function Spots() {
                             </CardActionArea>
                             <CardActions>
                                 <Button size="small" onClick={() => {
-                                    setSpotID(card.id)
-                                    setSpotName(card.name)
+                                    setSpotID(card.id);
+                                    setSpotName(card.name);
                                     setOpenReserve(true);
                                 }}>Reserve</Button>
                                 <Button size="small">Details</Button>
@@ -187,7 +324,133 @@ export default function Spots() {
                     </Grid>
                 ))}
             </Grid>
-            <Reserve spotID={spotID} spotName={spotName} openReserve={openReserve} setOpenReserve={setOpenReserve} />
+        </div>
+    );
+
+    const featuredTitle = (
+        <div>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Featured
+                </Typography>
+            </Divider>
+        </div>
+    );
+
+    const spotsTitle = (
+        <div>
+            <Divider sx={{ p: 5 }}>
+                <Typography component="h2" variant="h4" color="gray" gutterBottom>
+                    Spots
+                </Typography>
+            </Divider>
+        </div>
+    );
+
+    const calendarModal = (
+        <div>
+            <Modal
+                open={openReserve}
+                onClose={() => {
+                    setOpenReserve(false)
+                }}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Card style={style}>
+                    <CardHeader title={"Reservation for " + spotName} />
+                    <CardContent>
+                        <Calendar
+                            style={{ height: 300, minWidth: 275 }}
+                            selectable
+                            localizer={localizer}
+                            startAccessor="start"
+                            events={dates.concat(tempDates)}
+                            endAccessor="end"
+                            views={["month", "day"]}
+                            defaultView="day"
+                            defaultDate={Date.now()}
+                            // toolbar={false}
+                            onSelecting={(selected) => {
+                                setTempStart(selected.start);
+                                setTempEnd(selected.end);
+                                setTempDates([
+                                    {
+                                        title: "Selection",
+                                        allDay: false,
+                                        start: new Date(selected.start),
+                                        end: new Date(selected.end)
+                                    }
+                                ]);
+                            }}
+                        />
+                    </CardContent>
+                    <CardActions>
+                        <Button onClick={() => {
+                            if (tempStart !== '' && tempEnd !== '') {
+                                console.log(tempStart, tempEnd)
+                                setDialogOpen(true);
+                            }
+                        }}>Reserve</Button>
+                    </CardActions>
+                </Card>
+            </Modal>
+        </div>
+    );
+
+    const confirmReservation = (
+        <div>
+            <Dialog
+                open={dialogOpen}
+                onClose={() => {
+                    setDialogOpen(false);
+                }}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Confirm Reservation?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Typography color={errorDialog ? 'red' : 'black'}>
+                            {dialogMessage}
+                        </Typography>
+                        <Typography>Start: {tempStart.toString()}</Typography>
+                        <Typography>End: {tempEnd.toString()}</Typography>
+                        <Typography>At: {spotName}</Typography>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        setDialogMessage("Would you like to submit the following reservation?");
+                        setErrorDialog(false);
+                        setDialogOpen(false);
+                    }}>Cancel</Button>
+                    <Button
+                        onClick={() => {
+                            console.log(tempStart, tempEnd);
+                            createReservation(spotID);
+                        }}
+                        autoFocus
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+
+    return (
+        <div>
+            {featuredTitle}
+            {desktopFeatured}
+            {mobileFeatured}
+            {spotsTitle}
+            {desktopSpots}
+            {mobileSpots}
+            {calendarModal}
+            {confirmReservation}
         </div>
     )
 }

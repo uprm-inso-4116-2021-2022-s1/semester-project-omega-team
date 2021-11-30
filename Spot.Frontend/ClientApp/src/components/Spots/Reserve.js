@@ -34,9 +34,10 @@ const style = {
 export default function Reserve(props) {
 
     useEffect(() => {
-        retrieveReservations();
+        getReservations();
     }, [])
 
+    const backendAPI = "https://omegaspotapi.herokuapp.com/";
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const handleDialogOpen = () => {
         setDialogOpen(true);
@@ -44,30 +45,83 @@ export default function Reserve(props) {
     const handleDialogClose = () => {
         setDialogOpen(false);
     };
-    const [dates, setDates] = useState([
-        {
-            allDay: false,
-            start: new Date("11-26-2021 08:00:00"),
-            end: new Date("11-26-2021 08:30:00")
-        },
-        {
-            allDay: false,
-            start: new Date("11-26-2021 09:00:00"),
-            end: new Date("11-26-2021 09:30:00")
-        },
-        {
-            allDay: false,
-            start: new Date("11-26-2021 10:00:00"),
-            end: new Date("11-26-2021 10:30:00")
-        }
-    ]);
+    const [dates, setDates] = useState([]);
+    const [dialogMessage, setDialogMessage] = useState("Would you like to submit the following reservation?")
+    const [errorDialog, setErrorDialog] = useState(false);
     const [tempDates, setTempDates] = useState([]);
-    const [tempStart, setTempStart] = useState("");
-    const [tempEnd, setTempEnd] = useState("");
+    const [tempStart, setTempStart] = useState(new Date());
+    const [tempEnd, setTempEnd] = useState(new Date());
     const localizer = momentLocalizer(moment);
+    const [sessionID, setSessionID] = useState(Cookies.get('sessionID'));
 
-    const retrieveReservations = async () => {
+    const getReservations = async () => {
         console.log('retrieving reservations')
+        let tempList = []
+        await axios({
+            method: 'GET',
+            url: backendAPI + 'Spot/' + props.spotID + '/Schedule'
+        }).then((res) => {
+            res.data.forEach((item, i) => {
+                tempList.push({
+                    allDay: false,
+                    start: new Date(item.startTime),
+                    end: new Date(item.endTime)
+                })
+            })
+            console.log(tempList);
+            setDates(tempList);
+        }).catch((error) => {
+            console.log('get spot schedule error', error);
+        })
+    }
+
+    const createReservation = async () => {
+        await axios({
+            method: 'POST',
+            url: backendAPI + 'Reservation/Check',
+            // headers: { 'Content-Type': 'application/json' },
+            data: {
+                sessionID: sessionID,
+                reason: "Creating a reservation for user: " + sessionID + " at the spot: " + props.spotID,
+                startTime: tempStart.toISOString(),
+                endTime: tempEnd.toISOString(),
+                spotID: props.spotID
+            },
+        }).then((res) => {
+            if (!res.data) {
+                console.log('reservation valid!');
+                setDialogMessage("Would you like to submit the following reservation?");
+                setErrorDialog(false);
+                axios({
+                    method: 'POST',
+                    url: backendAPI + 'Reservation',
+                    headers: { 'Content-Type': 'application/json' },
+                    data: {
+                        sessionID: sessionID,
+                        reason: "Creating a reservation for user: " + sessionID + " at the spot: " + props.spotID,
+                        startTime: tempStart.toISOString(),
+                        endTime: tempEnd.toISOString(),
+                        spotID: props.spotID
+                    }
+                }).then((res) => {
+                    console.log('reservation submitted!', res.data)
+                    handleDialogClose();
+                }).catch((error) => {
+                    console.log('oops! something went wrong...', error);
+                })
+            }
+        }).catch((error) => {
+            console.log({
+                sessionID: sessionID,
+                reason: "Creating a reservation for user: " + sessionID + " at the spot: " + props.spotID,
+                startTime: tempStart.toISOString(),
+                endTime: tempEnd.toISOString(),
+                spotID: props.spotID
+            })
+            console.log('reservation invalid!', error);
+            setDialogMessage("Sorry, this reservation is invalid!")
+            setErrorDialog(true);
+        })
     }
 
     return (
@@ -110,7 +164,11 @@ export default function Reserve(props) {
                         />
                     </CardContent>
                     <CardActions>
-                        <Button onClick={handleDialogOpen}>Action 1</Button>
+                        <Button onClick={() => {
+                            if (tempStart !== '' && tempEnd !== '') {
+                                handleDialogOpen();
+                            }
+                        }}>Confirm</Button>
                     </CardActions>
                 </Card>
             </Modal>
@@ -125,20 +183,24 @@ export default function Reserve(props) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Typography>
-                            Would you like to submit the following reservation?
+                        <Typography color={errorDialog ? 'red' : 'black'}>
+                            {dialogMessage}
                         </Typography>
                         <Typography>Start: {tempStart.toString()}</Typography>
                         <Typography>End: {tempEnd.toString()}</Typography>
+                        <Typography>At: {props.spotName}</Typography>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDialogClose}>Cancel</Button>
+                    <Button onClick={() => {
+                        setDialogMessage("Would you like to submit the following reservation?");
+                        setErrorDialog(false);
+                        handleDialogClose();
+                    }}>Cancel</Button>
                     <Button
                         onClick={() => {
                             console.log(tempStart, tempEnd);
-                            // submit API call to make reservation
-                            handleDialogClose();
+                            createReservation();
                         }}
                         autoFocus
                     >
