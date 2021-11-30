@@ -20,31 +20,36 @@ export default function ManageReservations() {
     const backendAPI = "https://omegaspotapi.herokuapp.com/";
     const theme = useTheme();
     const cards = [1, 2, 3, 4, 5];
+    const [reservations, setReservations] = useState([]);
+    const sessionID = Cookies.get("sessionID");
 
-    // TODO: implement retrieveReservations
     const retrieveReservations = async () => {
         await axios({
             method: 'POST',
-            url: backendAPI, // + <insert api route here>
+            url: backendAPI + 'User/Reservations?Status=2',
             headers: { 'Content-Type': 'application/json' },
-            data: null, // <insert session ID here> example: Cookies.get('sessionID') // => 'value'
+            data: sessionID
         }).then((res) => {
-            // do something with the result
+            setReservations(res.data);
         })
     }
 
     // TODO: implement cancelReservations
-    const cancelReservation = async () => {
-        await axios()
-
-        // {
-        //     sessionID: "3fa85f64-5717-4562-b3fc-2c963f66afa6", u can get this from Cookies.get('sessionID') // => 'value'
-        //     reservationID: "3fa85f64-5717-4562-b3fc-2c963f66afa6", u need to get this from a local variable when u click cancel button
-        //     newStatus: 6
-        // }
-
+    const cancelReservation = async (reservationID) => {
+        console.log(sessionID, reservationID);
+        await axios({
+            method: 'PUT', 
+            url: backendAPI + 'Reservation', 
+            headers:  { 'Content-Type': 'application/json' },
+            data: {
+                sessionID: sessionID,
+                reservationID: reservationID,
+                newStatus: 6
+            }
+        }).then(()=> {
+            retrieveReservations();
+        })
     }
-
 
     return (
         <div>
@@ -55,8 +60,8 @@ export default function ManageReservations() {
             </Divider>
             {/* mobile card */}
             <Grid container spacing={4} >
-                {cards.map((card) => (
-                    <Grid item key={card} xs={12} sm={6} md={4}>
+                {reservations.map((card, i) => (
+                    <Grid item key={i} xs={12} sm={6} md={4}>
                         <Card>
                             <CardActionArea>
                                 <CardMedia
@@ -67,7 +72,7 @@ export default function ManageReservations() {
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        Reserved Spot {card}
+                                        Reservation for {card.spot.name}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -79,8 +84,7 @@ export default function ManageReservations() {
                             <CardActions>
                                 <Button size="small">Details</Button>
                                 <Button size="small" onClick={() => {
-                                    // TODO: set reservationID to a local variable, example setVariable(card.reservationID)
-                                    // TODO: call cancelReservation function
+                                    cancelReservation(card.id);
                                 }}>Cancel</Button>
                             </CardActions>
                         </Card>
