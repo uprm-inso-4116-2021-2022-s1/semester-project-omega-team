@@ -234,6 +234,7 @@ export default function SignUpBusiness() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <DateTimePicker
+                                        fullWidth
                                         id="openTime"
                                         label="Open Time"
                                         value={openTime}
@@ -248,6 +249,7 @@ export default function SignUpBusiness() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <DateTimePicker
+                                        fullWidth
                                         label="Close Time"
                                         id="closeTime"
                                         value={closeTime}

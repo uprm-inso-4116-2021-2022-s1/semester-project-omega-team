@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,16 +26,21 @@ import Statistics from '../Statistics/Statistics';
 import Spots from '../Spots/Spots';
 import ManageReservations from '../ManageReservations/ManageReservations';
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const drawerWidth = 240;
 
 export default function MainPage(props) {
 
-    // declare variables
     let history = useHistory();
 
+    // declare variables
+    const usersAPI = "https://omegaspotapi.herokuapp.com/User/";
+    const isOwner = Cookies.get("isOwner") === "true" ? true : false;
+
     const { window } = props;
-    const [accountType, setAccountType] = useState("business");
+    const [accountType, setAccountType] = useState(isOwner ? "business" : "client");
     const container = window !== undefined ? () => window().document.body : undefined;
 
     const [showManageSpots, setShowManageSpots] = useState(true);
@@ -73,10 +78,20 @@ export default function MainPage(props) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handleLogOut = () => {
-        history.push("/login")
+    const handleLogOut = async () => {
+        await axios({
+            method: 'POST',
+            url: usersAPI + 'Auth/Out',
+            headers: { 'Content-Type': 'application/json' },
+            data: Cookies.get("sessionID")
+        }).then((res) => {
+            console.log(res.data)
+            Cookies.remove("sessionID");
+            Cookies.remove("isOwner");
+            history.push("/login")
+        })
     };
-
+    
     // business functions
     const handleShowManageSpots = () => {
         setShowManageSpots(true);
@@ -303,7 +318,7 @@ export default function MainPage(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    {accountType === "business" ?
+                    {isOwner ?
                         <Typography variant="h6" noWrap component="div">
                             Business
                         </Typography>
@@ -388,7 +403,7 @@ export default function MainPage(props) {
 
     const content = (
         <div>
-            {accountType === "business" ? contentBusiness : contentClient}
+            {isOwner ? contentBusiness : contentClient}
         </div>
     );
 
