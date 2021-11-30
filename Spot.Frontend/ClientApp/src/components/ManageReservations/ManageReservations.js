@@ -34,7 +34,7 @@ export default function ManageReservations() {
         })
     }
 
-    // TODO: implement cancelReservations
+    
     const cancelReservation = async (reservationID) => {
         console.log(sessionID, reservationID);
         await axios({
