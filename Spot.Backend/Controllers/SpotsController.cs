@@ -81,7 +81,7 @@ namespace OmegaSpot.Backend.Controllers {
             return Ok(asset);   
         }
 
-        /// <summary>Gets a spot's Schedule</summary>
+        /// <summary>Gets a spot's Schedule for specific day</summary>
         /// <param name="id">ID of a spot</param>
         /// <param name="Date">Day of the schedule you want (If empty, returns schedule for today)</param>
         /// <returns>List of reservations with limited details for this spot</returns>
@@ -97,7 +97,32 @@ namespace OmegaSpot.Backend.Controllers {
                     R.Status != ReservationStatus.MISSED &&
                     R.Status != ReservationStatus.DENIED &&
                     R.Status != ReservationStatus.CANCELLED
-                ).ToListAsync();
+                ).OrderBy(R=>R.StartTime).ToListAsync();
+
+            Rs.ForEach(R => R.Reason = "");
+
+            return Ok(Rs);
+        }
+
+        /// <summary>Gets a spot's Schedule for all days past given date with the given start and end indexes. IE: With a start of 0, and end of 20, it will return the first 20 reservations (sorted by ascending starttime)</summary>
+        /// <param name="id">ID of a spot</param>
+        /// <param name="Date">Day of the schedule you want (If empty, puts now)</param>
+        /// <param name="Start">Index of first reservation in the schedule to return</param>
+        /// <param name="End">Index of the last reservation in the schedule to return</param>
+        /// <returns>List of reservations with limited details for this spot</returns>
+        // GET: SPOT/5/ScheduleAll
+        [HttpGet("{id}/ScheduleFuture")]
+        public async Task<IActionResult> ScheduleFuture(Guid? id, DateTime? Date = null, int Start = 0, int End = 20) {
+            if (id == null) { return NotFound(); }
+            DateTime RealDate = Date ?? DateTime.Now;
+
+            List<Reservation> Rs = await _context.Reservation.Where(
+                R => R.Spot.ID == id &&
+                R.StartTime.Day == RealDate.Day &&
+                    R.Status != ReservationStatus.MISSED &&
+                    R.Status != ReservationStatus.DENIED &&
+                    R.Status != ReservationStatus.CANCELLED
+                ).OrderBy(R => R.StartTime).Skip(Start).Take(End-Start).ToListAsync();
 
             Rs.ForEach(R => R.Reason = "");
 
