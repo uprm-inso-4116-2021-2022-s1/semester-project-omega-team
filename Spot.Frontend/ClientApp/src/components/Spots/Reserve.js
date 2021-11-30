@@ -126,7 +126,6 @@ export default function Reserve(props) {
 
     return (
         <div>
-            {/* <Button onClick={handleOpen}>Open modal</Button> */}
             <Modal
                 open={props.openReserve}
                 onClose={() => {

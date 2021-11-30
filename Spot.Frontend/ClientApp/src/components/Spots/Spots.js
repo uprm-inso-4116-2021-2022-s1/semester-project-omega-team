@@ -39,6 +39,12 @@ export default function Spots() {
 
     useEffect(() => {
         getSpots();
+        return () => {
+            setSpots([]);
+            setFeaturedSpots([]);
+            setDates([]);
+            setTempDates([]);
+        };
     }, [])
 
     const backendAPI = "https://omegaspotapi.herokuapp.com/";
@@ -90,9 +96,10 @@ export default function Spots() {
     const getReservations = async (spotID) => {
         console.log('retrieving reservations')
         let tempList = []
+
         await axios({
             method: 'GET',
-            url: backendAPI + 'Spot/' + spotID + '/Schedule'
+            url: backendAPI + 'Spot/' + spotID + '/ScheduleFuture?Start=0&End=20'
         }).then((res) => {
             res.data.forEach((item, i) => {
                 tempList.push({
