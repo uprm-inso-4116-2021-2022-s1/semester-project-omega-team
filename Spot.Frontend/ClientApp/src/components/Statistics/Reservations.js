@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,35 +8,37 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Title from '../Title/Title'
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const columns = [
     { id: 'name', label: 'Name', minWidth: 170 },
-    { id: 'spot', label: 'Spot', minWidth: 100 },
+    { id: 'spot', label: 'Spot', minWidth: 170 },
     {
-        id: 'date',
-        label: 'Date',
-        minWidth: 170,
-        align: 'right',
+        id: 'startTime',
+        label: 'Start Time',
+        minWidth: 200,
+        // align: 'right',
         // format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'time',
-        label: 'Time',
-        minWidth: 170,
-        align: 'right',
+        id: 'endTime',
+        label: 'End Time',
+        minWidth: 200,
+        // align: 'right',
         // format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'party',
-        label: 'Party',
-        minWidth: 170,
-        align: 'right',
+        id: 'reason',
+        label: 'Reason',
+        minWidth: 100,
+        // align: 'right',
         // format: (value) => value.toFixed(2),
     },
 ];
 
-function createData(name, spot, date, time, party) {
-    return { name, spot, date, time, party };
+function createData(name, spot, startTime, endTime, reason) {
+    return { name, spot, startTime, endTime, reason };
 }
 
 const rows = [
@@ -58,8 +60,37 @@ const rows = [
 ];
 
 export default function Reservations() {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    useEffect(() => {
+        getReservations();
+        return () => {
+            setReservations([]);
+        };
+    }, [])
+
+    const backendAPI = "https://omegaspotapi.herokuapp.com/";
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [reservations, setReservations] = useState([]);
+    const [sessionID, setSessionID] = useState(Cookies.get('sessionID'));
+
+    const getReservations = async () => {
+        let tempList = []
+        for (let i = 0; i < 7; i++) {
+            await axios({
+                method: 'POST',
+                url: backendAPI + 'Business/Reservations?Status=' + i,
+                headers: { 'Content-Type': 'application/json' },
+                data: sessionID
+            }).then((res) => {
+                res.data.forEach((item) => {
+                    tempList.push(createData(item.user.name, item.spot.name, new Date(item.startTime).toTimeString(), new Date(item.endTime).toTimeString(), item.reason));
+                })
+                setReservations(tempList)
+                console.log(reservations)
+            }).catch((error) => { console.log(error) })
+        }
+    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -89,9 +120,9 @@ export default function Reservations() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {reservations
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
+                            .map((row, i) => {
                                 return (
                                     <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                                         {columns.map((column) => {

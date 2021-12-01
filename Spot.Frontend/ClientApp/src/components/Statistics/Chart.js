@@ -1,7 +1,9 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from '../Title/Title';
+import axios from "axios";
+import Cookies from "js-cookie";
 
 // Generate Sales Data
 function createData(day, amount) {

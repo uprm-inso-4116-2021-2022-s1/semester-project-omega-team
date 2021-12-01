@@ -51,14 +51,23 @@ export default function Spots() {
     const [featuredSpots, setFeaturedSpots] = useState([]);
     const [spots, setSpots] = useState([]);
     const [openReserve, setOpenReserve] = useState(false);
-    const [spotDetails, setSpotDetails] = useState();
+    const [openDetails, setOpenDetails] = useState(false);
+    const [spotDetails, setSpotDetails] = useState({
+        name: "",
+        description: "",
+        business: {
+            website: "",
+            phoneNumbers: "",
+            email: ""
+        }
+    });
     const [spotName, setSpotName] = useState("");
     const [spotID, setSpotID] = useState("");
     const [sessionID, setSessionID] = useState(Cookies.get('sessionID'));
-    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [reserveDialogOpen, setReserveDialogOpen] = useState(false);
     const [dates, setDates] = useState([]);
-    const [dialogMessage, setDialogMessage] = useState("Would you like to submit the following reservation?")
-    const [errorDialog, setErrorDialog] = useState(false);
+    const [reserveDialogMessage, setReserveDialogMessage] = useState("Would you like to submit the following reservation?")
+    const [errorReserveDialog, setErrorReserveDialog] = useState(false);
     const [tempDates, setTempDates] = useState([]);
     const [tempStart, setTempStart] = useState(new Date());
     const [tempEnd, setTempEnd] = useState(new Date());
@@ -88,8 +97,9 @@ export default function Spots() {
             url: backendAPI + 'Spot/' + spotID,
             // headers: { 'Content-Type': 'application/json' },
         }).then((res) => {
-            console.log('received the following spot name for spot:', spotID, res.data);
+            console.log('received the following spot details for spot:', spotID, res.data);
             setSpotDetails(res.data);
+            setOpenDetails(true);
         })
     }
 
@@ -115,7 +125,7 @@ export default function Spots() {
         })
     }
 
-    const createReservation = async (spotID) => {
+    const createReservation = async () => {
         await axios({
             method: 'POST',
             url: backendAPI + 'Reservation/Check',
@@ -130,8 +140,8 @@ export default function Spots() {
         }).then((res) => {
             if (!res.data) {
                 console.log('reservation valid!');
-                setDialogMessage("Would you like to submit the following reservation?");
-                setErrorDialog(false);
+                setReserveDialogMessage("Would you like to submit the following reservation?");
+                setErrorReserveDialog(false);
                 axios({
                     method: 'POST',
                     url: backendAPI + 'Reservation',
@@ -146,7 +156,7 @@ export default function Spots() {
                 }).then((res) => {
                     console.log('reservation submitted!', res.data)
                     getReservations(spotID)
-                    setDialogOpen(false);
+                    setReserveDialogOpen(false);
                 }).catch((error) => {
                     console.log('oops! something went wrong...', error);
                 })
@@ -160,8 +170,8 @@ export default function Spots() {
                 spotID: spotID
             })
             console.log('reservation invalid!', error);
-            setDialogMessage("Sorry, this reservation is invalid!")
-            setErrorDialog(true);
+            setReserveDialogMessage("Sorry, this reservation is invalid!")
+            setErrorReserveDialog(true);
         })
     }
 
@@ -182,13 +192,16 @@ export default function Spots() {
                             />
                             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
+                                    <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
-                                    <Typography variant="body1" color="text.secondary">
-                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        Start: {new Date(card.business.openTime).toTimeString()}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        End: {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
                                 </CardContent>
@@ -198,14 +211,18 @@ export default function Spots() {
                                         setSpotName(card.name)
                                         setOpenReserve(true);
                                     }}>Reserve</Button>
-                                    <Button size="small">Details</Button>
+                                    <Button size="small" onClick={() => {
+                                        setSpotID(card.id);
+                                        setSpotName(card.name);
+                                        getSpotDetails(card.id);
+                                    }}>Details</Button>
                                 </CardActions>
                             </Box>
                         </Card>
                     </Grid>
                 ))}
             </Grid>
-        </div>
+        </div >
     );
 
     const mobileFeatured = (
@@ -223,13 +240,16 @@ export default function Spots() {
                                     alt="random"
                                 />
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
+                                    <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
-                                    <Typography variant="body1" color="text.secondary">
-                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        Start: {new Date(card.business.openTime).toTimeString()}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        End: {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
                                 </CardContent>
@@ -240,7 +260,11 @@ export default function Spots() {
                                     setSpotName(card.name)
                                     setOpenReserve(true);
                                 }}>Reserve</Button>
-                                <Button size="small">Details</Button>
+                                <Button size="small" onClick={() => {
+                                    setSpotID(card.id);
+                                    setSpotName(card.name);
+                                    getSpotDetails(card.id);
+                                }}>Details</Button>
                             </CardActions>
                         </Card>
                     </Grid>
@@ -267,23 +291,30 @@ export default function Spots() {
                                     <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
-                                    <Typography variant="body1" color="text.secondary">
-                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        Start: {new Date(card.business.openTime).toTimeString()}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        End: {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                     <Button size="small" onClick={() => {
-                                        setSpotID(card.id)
-                                        setSpotName(card.name)
+                                        setSpotID(card.id);
+                                        setSpotName(card.name);
                                         getReservations(card.id);
                                         setOpenReserve(true);
                                     }}>
                                         Reserve
                                     </Button>
-                                    <Button size="small">Details</Button>
+                                    <Button size="small" onClick={() => {
+                                        setSpotID(card.id);
+                                        setSpotName(card.name);
+                                        getSpotDetails(card.id);
+                                    }} >Details</Button>
                                 </CardActions>
                             </Box>
                         </Card>
@@ -308,13 +339,16 @@ export default function Spots() {
                                     alt="random"
                                 />
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
+                                    <Typography justifySelf="flex-start" gutterBottom variant="h5" component="div">
                                         {card.name}
                                     </Typography>
-                                    <Typography variant="body1" color="text.secondary">
-                                        {new Date(card.business.openTime).toTimeString()} - {new Date(card.business.closeTime).toTimeString()}
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        Start: {new Date(card.business.openTime).toTimeString()}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
+                                        End: {new Date(card.business.closeTime).toTimeString()}
+                                    </Typography>
+                                    <Typography justifySelf="flex-start" variant="body2" color="text.secondary">
                                         {card.description}
                                     </Typography>
                                 </CardContent>
@@ -325,7 +359,11 @@ export default function Spots() {
                                     setSpotName(card.name);
                                     setOpenReserve(true);
                                 }}>Reserve</Button>
-                                <Button size="small">Details</Button>
+                                <Button size="small" onClick={() => {
+                                    setSpotID(card.id);
+                                    setSpotName(card.name);
+                                    getSpotDetails(card.id);
+                                }}>Details</Button>
                             </CardActions>
                         </Card>
                     </Grid>
@@ -396,7 +434,7 @@ export default function Spots() {
                         <Button onClick={() => {
                             if (tempStart !== '' && tempEnd !== '') {
                                 console.log(tempStart, tempEnd)
-                                setDialogOpen(true);
+                                setReserveDialogOpen(true);
                             }
                         }}>Reserve</Button>
                     </CardActions>
@@ -408,9 +446,9 @@ export default function Spots() {
     const confirmReservation = (
         <div>
             <Dialog
-                open={dialogOpen}
+                open={reserveDialogOpen}
                 onClose={() => {
-                    setDialogOpen(false);
+                    setReserveDialogOpen(false);
                 }}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -420,8 +458,8 @@ export default function Spots() {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Typography color={errorDialog ? 'red' : 'black'}>
-                            {dialogMessage}
+                        <Typography color={errorReserveDialog ? 'red' : 'black'}>
+                            {reserveDialogMessage}
                         </Typography>
                         <Typography>Start: {tempStart.toString()}</Typography>
                         <Typography>End: {tempEnd.toString()}</Typography>
@@ -430,9 +468,9 @@ export default function Spots() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => {
-                        setDialogMessage("Would you like to submit the following reservation?");
-                        setErrorDialog(false);
-                        setDialogOpen(false);
+                        setReserveDialogMessage("Would you like to submit the following reservation?");
+                        setErrorReserveDialog(false);
+                        setReserveDialogOpen(false);
                     }}>Cancel</Button>
                     <Button
                         onClick={() => {
@@ -448,6 +486,35 @@ export default function Spots() {
         </div>
     );
 
+    const spotDetail = (
+        <div>
+            <Dialog
+                open={openDetails}
+                onClose={() => {
+                    setOpenDetails(false);
+                }}
+            >
+                <DialogTitle>
+                    Details for {spotDetails.name}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <Typography>{spotDetails.description}</Typography>
+                        <Typography>{spotDetails.business.name}</Typography>
+                        <Typography>{spotDetails.business.website}</Typography>
+                        <Typography>{spotDetails.business.email}</Typography>
+                        <Typography>{spotDetails.business.phoneNumbers}</Typography>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        setOpenDetails(false);
+                    }}>Return</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    )
+
     return (
         <div>
             {featuredTitle}
@@ -458,6 +525,7 @@ export default function Spots() {
             {mobileSpots}
             {calendarModal}
             {confirmReservation}
+            {spotDetail}
         </div>
     )
 }

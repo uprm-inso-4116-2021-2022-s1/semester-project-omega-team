@@ -15,6 +15,9 @@ export default function ManageReservations() {
 
     useEffect(() => {
         retrieveReservations();
+        return () => {
+            setReservations([]);
+        };
     }, [])
 
     const backendAPI = "https://omegaspotapi.herokuapp.com/";
@@ -24,29 +27,35 @@ export default function ManageReservations() {
     const sessionID = Cookies.get("sessionID");
 
     const retrieveReservations = async () => {
-        await axios({
-            method: 'POST',
-            url: backendAPI + 'User/Reservations?Status=2',
-            headers: { 'Content-Type': 'application/json' },
-            data: sessionID
-        }).then((res) => {
-            setReservations(res.data);
-        })
+        let tempList = []
+        for (let i = 0; i < 7; i++) {
+            await axios({
+                method: 'POST',
+                url: backendAPI + 'User/Reservations?Status='+i,
+                headers: { 'Content-Type': 'application/json' },
+                data: sessionID
+            }).then((res) => {
+                console.log(res.data);
+                tempList = tempList.concat(res.data);
+                setReservations(tempList);
+            }).catch((error) => {
+                console.log('retrieving reservations error', error);
+            })
+        }
     }
 
-    
     const cancelReservation = async (reservationID) => {
         console.log(sessionID, reservationID);
         await axios({
-            method: 'PUT', 
-            url: backendAPI + 'Reservation', 
-            headers:  { 'Content-Type': 'application/json' },
+            method: 'PUT',
+            url: backendAPI + 'Reservation',
+            headers: { 'Content-Type': 'application/json' },
             data: {
                 sessionID: sessionID,
                 reservationID: reservationID,
                 newStatus: 6
             }
-        }).then(()=> {
+        }).then(() => {
             retrieveReservations();
         })
     }
@@ -75,9 +84,7 @@ export default function ManageReservations() {
                                         Reservation for {card.spot.name}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                                        enim praesent elementum facilisis leo vel.
+                                        {card.spot.description}
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
